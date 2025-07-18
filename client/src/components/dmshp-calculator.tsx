@@ -161,14 +161,18 @@ export default function DmshpCalculator() {
       <div className="mb-8">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <Snowflake className="text-primary text-2xl" />
+            <Snowflake className="text-blue-600 text-3xl" />
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">DMSHP Technology</h1>
-              <p className="text-sm text-gray-600">Energy Efficiency Retrofit Calculator</p>
+              <h1 className="text-3xl font-bold text-gray-900">DMSHP Calculator</h1>
+              <p className="text-lg text-gray-600">Ductless Mini-Split Heat Pump Technology</p>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <Button onClick={handleSaveToProject} className="bg-primary hover:bg-blue-700" disabled={saveToProject.isPending}>
+          <div className="flex items-center space-x-3">
+            <CommonValuesDialog 
+              values={getCommonValues('dmshp')} 
+              title="Common Values for DMSHP Calculations"
+            />
+            <Button onClick={handleSaveToProject} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2" disabled={saveToProject.isPending}>
               <Save className="w-4 h-4 mr-2" />
               {saveToProject.isPending ? "Saving..." : "Save to Project"}
             </Button>

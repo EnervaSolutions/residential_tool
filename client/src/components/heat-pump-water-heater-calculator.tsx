@@ -145,65 +145,45 @@ export default function HeatPumpWaterHeaterCalculator() {
       <div className="mb-8">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <Wind className="text-primary text-2xl" />
+            <Wind className="text-green-600 text-3xl" />
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Heat Pump Water Heater - Gas Technology</h1>
-              <p className="text-sm text-gray-600">Energy Efficiency Retrofit Calculator</p>
+              <h1 className="text-3xl font-bold text-gray-900">Heat Pump Water Heater - Gas Calculator</h1>
+              <p className="text-lg text-gray-600">Energy Efficiency Retrofit Calculator</p>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <Button onClick={handleSaveToProject} className="bg-primary hover:bg-blue-700" disabled={saveToProject.isPending}>
+          <div className="flex items-center space-x-3">
+            <CommonValuesDialog 
+              values={getCommonValues('heat-pump-water-heater')} 
+              title="Common Values for Heat Pump Water Heater Calculations"
+            />
+            <Button onClick={handleSaveToProject} className="bg-green-600 hover:bg-green-700 text-white px-6 py-2" disabled={saveToProject.isPending}>
               <Save className="w-4 h-4 mr-2" />
               {saveToProject.isPending ? "Saving..." : "Save to Project"}
             </Button>
           </div>
         </div>
       </div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Content */}
-        <div className="lg:col-span-2 space-y-8">
-          
-          {/* Measure Overview */}
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="bg-primary bg-opacity-10 p-2 rounded-lg">
-                  <TrendingUp className="text-primary text-xl" />
-                </div>
-                <h2 className="text-xl font-semibold text-gray-900">Measure Overview</h2>
-              </div>
-              {/* Summary Section */}
-              <div className="bg-purple-50 p-4 rounded-lg space-y-2 text-sm">
-                <div><strong>Measure Name:</strong> Heat Pump Water Heater</div>
-                <div><strong>Category:</strong> Water Heater</div>
-                <div><strong>Lifetime:</strong> 15 years</div>
-                <div><strong>Source:</strong> Illinois Statewide Technical Reference Manual — 5.4.3 Heat Pump Water Heaters</div>
-              </div>
-              
-              {/* Description */}
-              <div className="space-y-3">
-                <p className="text-gray-700"><strong>Base Case:</strong> Natural Gas water heater</p>
-                <p className="text-gray-700"><strong>Efficient Case:</strong> Heat Pump Water Heater with EF of 2.0</p>
-                <p className="text-gray-700"><strong>Source:</strong> MID-ATLANTIC TECHNICAL REFERENCE MANUAL VERSION 8 / May 2018 - Page 192</p>
-              </div>
-            </CardContent>
-          </Card>
 
-          {/* Input Parameters */}
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="bg-primary bg-opacity-10 p-2 rounded-lg">
-                  <Wind className="text-primary text-xl" />
-                </div>
-                <h2 className="text-xl font-semibold text-gray-900">Input Parameters</h2>
-              </div>
-              
-              <Form {...form}>
-                <div className="space-y-8">
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Input Panel */}
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Wind className="text-green-600" />
+                    <span>Heat Pump Water Heater - Gas Calculator</span>
+                  </CardTitle>
+                  <p className="text-sm text-gray-600">
+                    Heat Pump Water Heater replacing Gas Water Heater
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <Form {...form}>
+                    <div className="space-y-6">
 
-                    {/* Water Usage and Properties */}
+                      {/* Water Usage and Properties */}
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-4">Water Usage and Properties</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -443,8 +423,10 @@ export default function HeatPumpWaterHeaterCalculator() {
               </div>
             </CardContent>
           </Card>
+          </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

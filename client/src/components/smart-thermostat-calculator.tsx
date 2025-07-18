@@ -120,13 +120,25 @@ export default function SmartThermostatCalculator() {
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Thermometer className="text-emerald-600" />
-                  <span>Smart Thermostat Calculator</span>
-                </CardTitle>
-                <p className="text-sm text-gray-600">
-                  Installing Smart Thermostat where previous thermostat was non-programmable
-                </p>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-4">
+                    <Thermometer className="text-emerald-600 text-3xl" />
+                    <div>
+                      <h1 className="text-3xl font-bold text-gray-900">Smart Thermostat Calculator</h1>
+                      <p className="text-lg text-gray-600">Installing Smart Thermostat where previous thermostat was non-programmable</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <CommonValuesDialog 
+                      values={getCommonValues('smart-thermostat')} 
+                      title="Common Values for Smart Thermostat Calculations"
+                    />
+                    <Button onClick={handleSaveToProject} className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2" disabled={saveToProject.isPending}>
+                      <Save className="w-4 h-4 mr-2" />
+                      {saveToProject.isPending ? "Saving..." : "Save to Project"}
+                    </Button>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
                 <Form {...form}>

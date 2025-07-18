@@ -158,13 +158,25 @@ export default function DwhrElectricCalculator() {
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Zap className="text-yellow-600" />
-                  <span>DWHR - Electric Calculator</span>
-                </CardTitle>
-                <p className="text-sm text-gray-600">
-                  Drain Water Heat Recovery with Electric Water Heater
-                </p>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-4">
+                    <Zap className="text-yellow-600 text-3xl" />
+                    <div>
+                      <h1 className="text-3xl font-bold text-gray-900">DWHR - Electric Calculator</h1>
+                      <p className="text-lg text-gray-600">Drain Water Heat Recovery with Electric Water Heater</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <CommonValuesDialog 
+                      values={getCommonValues('dwhr-electric')} 
+                      title="Common Values for DWHR Electric Calculations"
+                    />
+                    <Button onClick={handleSaveToProject} className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2" disabled={saveToProject.isPending}>
+                      <Save className="w-4 h-4 mr-2" />
+                      {saveToProject.isPending ? "Saving..." : "Save to Project"}
+                    </Button>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
                 <Form {...form}>

@@ -153,14 +153,18 @@ export default function SolarPvCalculator() {
       <div className="mb-8">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <Sun className="text-primary text-2xl" />
+            <Sun className="text-orange-600 text-3xl" />
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Solar PV Technology</h1>
-              <p className="text-sm text-gray-600">Energy Efficiency Retrofit Calculator</p>
+              <h1 className="text-3xl font-bold text-gray-900">Solar PV Calculator</h1>
+              <p className="text-lg text-gray-600">1 kW Solar PV system providing electricity generation offset</p>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <Button onClick={handleSaveToProject} className="bg-primary hover:bg-blue-700" disabled={saveToProject.isPending}>
+          <div className="flex items-center space-x-3">
+            <CommonValuesDialog 
+              values={getCommonValues('solar-pv')} 
+              title="Common Values for Solar PV Calculations"
+            />
+            <Button onClick={handleSaveToProject} className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2" disabled={saveToProject.isPending}>
               <Save className="w-4 h-4 mr-2" />
               {saveToProject.isPending ? "Saving..." : "Save to Project"}
             </Button>

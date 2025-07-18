@@ -140,6 +140,31 @@ export default function HeatPumpWaterHeaterElectricCalculator() {
   };
 
   return (
+    <>
+      <div className="p-8">
+        {/* Technology Header */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-4">
+              <Zap className="text-emerald-600 text-3xl" />
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Heat Pump Water Heater - Electric Calculator</h1>
+                <p className="text-lg text-gray-600">Energy Efficiency Retrofit Calculator</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <CommonValuesDialog 
+                values={getCommonValues('heat-pump-water-heater-electric')} 
+                title="Common Values for Heat Pump Water Heater Electric Calculations"
+              />
+              <Button onClick={handleSaveToProject} className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2" disabled={saveToProject.isPending}>
+                <Save className="w-4 h-4 mr-2" />
+                {saveToProject.isPending ? "Saving..." : "Save to Project"}
+              </Button>
+            </div>
+          </div>
+        </div>
+
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -428,5 +453,7 @@ export default function HeatPumpWaterHeaterElectricCalculator() {
         </div>
       </div>
     </div>
+  </div>
+</>
   );
 }

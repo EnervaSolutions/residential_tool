@@ -158,13 +158,25 @@ export default function DwhrGasCalculator() {
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Droplets className="text-cyan-600" />
-                  <span>DWHR - Gas Calculator</span>
-                </CardTitle>
-                <p className="text-sm text-gray-600">
-                  Drain Water Heat Recovery with Natural Gas Water Heater
-                </p>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-4">
+                    <Droplets className="text-blue-600 text-3xl" />
+                    <div>
+                      <h1 className="text-3xl font-bold text-gray-900">DWHR - Gas Calculator</h1>
+                      <p className="text-lg text-gray-600">Drain Water Heat Recovery with Natural Gas Water Heater</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <CommonValuesDialog 
+                      values={getCommonValues('dwhr-gas')} 
+                      title="Common Values for DWHR Gas Calculations"
+                    />
+                    <Button onClick={handleSaveToProject} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2" disabled={saveToProject.isPending}>
+                      <Save className="w-4 h-4 mr-2" />
+                      {saveToProject.isPending ? "Saving..." : "Save to Project"}
+                    </Button>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
                 <Form {...form}>

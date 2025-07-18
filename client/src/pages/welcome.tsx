@@ -86,13 +86,23 @@ export default function WelcomePage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full space-y-8">
         {/* Header */}
-        <div className="text-center space-y-4">
-          <div className="flex items-center justify-center space-x-3">
-            <Calculator className="text-primary text-4xl" />
-            <h1 className="text-4xl font-bold text-gray-900">Energy Efficiency Retrofits Program</h1>
+        <div className="text-center space-y-6">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-6 rounded-full shadow-xl">
+              <Calculator className="text-white text-5xl" />
+            </div>
+            <div className="space-y-2">
+              <h1 className="text-5xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                Energy Efficiency Retrofits
+              </h1>
+              <h2 className="text-2xl font-semibold text-gray-700">
+                Professional Calculator Suite
+              </h2>
+            </div>
           </div>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Comprehensive energy efficiency calculator featuring 13 technology calculators for residential retrofit projects
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            Comprehensive energy efficiency calculator suite featuring advanced technology calculators 
+            for residential retrofit projects and energy savings analysis
           </p>
         </div>
 
@@ -137,83 +147,7 @@ export default function WelcomePage() {
           </Card>
         </div>
 
-        {/* Technology Features Overview */}
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-center text-gray-900 mb-8">Available Technology Calculators</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <div className="text-center space-y-2">
-              <Calculator className="text-blue-500 text-xl mx-auto" />
-              <h3 className="font-medium">Windows</h3>
-              <p className="text-xs text-gray-600">ENERGY STAR® Replacement Windows</p>
-            </div>
-            <div className="text-center space-y-2">
-              <FileText className="text-green-500 text-xl mx-auto" />
-              <h3 className="font-medium">Doors</h3>
-              <p className="text-xs text-gray-600">ENERGY STAR® Replacement Doors</p>
-            </div>
-            <div className="text-center space-y-2">
-              <FolderOpen className="text-purple-500 text-xl mx-auto" />
-              <h3 className="font-medium">Air Sealing</h3>
-              <p className="text-xs text-gray-600">Improve home air tightness by 10%</p>
-            </div>
-            <div className="text-center space-y-2">
-              <Plus className="text-orange-500 text-xl mx-auto" />
-              <h3 className="font-medium">Attic Insulation</h3>
-              <p className="text-xs text-gray-600">Increase insulation to R-55</p>
-            </div>
-            <div className="text-center space-y-2">
-              <Calculator className="text-indigo-500 text-xl mx-auto" />
-              <h3 className="font-medium">DWHR - Gas</h3>
-              <p className="text-xs text-gray-600">Drain Water Heat Recovery for Gas</p>
-            </div>
-            <div className="text-center space-y-2">
-              <Calculator className="text-cyan-500 text-xl mx-auto" />
-              <h3 className="font-medium">DWHR - Electric</h3>
-              <p className="text-xs text-gray-600">Drain Water Heat Recovery for Electric</p>
-            </div>
-            <div className="text-center space-y-2">
-              <Calculator className="text-red-500 text-xl mx-auto" />
-              <h3 className="font-medium">Heat Pump WH - Gas</h3>
-              <p className="text-xs text-gray-600">Heat Pump Water Heater replacing Gas</p>
-            </div>
-            <div className="text-center space-y-2">
-              <Calculator className="text-pink-500 text-xl mx-auto" />
-              <h3 className="font-medium">Heat Pump WH - Electric</h3>
-              <p className="text-xs text-gray-600">Heat Pump Water Heater replacing Electric</p>
-            </div>
-            <div className="text-center space-y-2">
-              <Calculator className="text-teal-500 text-xl mx-auto" />
-              <h3 className="font-medium">Heat Recovery Ventilator</h3>
-              <p className="text-xs text-gray-600">HVI Certified HRV with 75% efficiency</p>
-            </div>
-            <div className="text-center space-y-2">
-              <Calculator className="text-emerald-500 text-xl mx-auto" />
-              <h3 className="font-medium">Smart Thermostat</h3>
-              <p className="text-xs text-gray-600">ENERGY STAR® Smart Thermostat</p>
-            </div>
-            <div className="text-center space-y-2">
-              <Calculator className="text-amber-500 text-xl mx-auto" />
-              <h3 className="font-medium">Ground Source Heat Pump</h3>
-              <p className="text-xs text-gray-600">ENERGY STAR® GSHP with IGSHPA installer</p>
-            </div>
-            <div className="text-center space-y-2">
-              <Calculator className="text-violet-500 text-xl mx-auto" />
-              <h3 className="font-medium">DMSHP</h3>
-              <p className="text-xs text-gray-600">Ductless Mini-Split Heat Pump</p>
-            </div>
-            <div className="text-center space-y-2">
-              <Calculator className="text-yellow-500 text-xl mx-auto" />
-              <h3 className="font-medium">Solar PV</h3>
-              <p className="text-xs text-gray-600">Solar Photovoltaic System (1 kW+)</p>
-            </div>
-          </div>
-          
-          <div className="mt-8 text-center">
-            <p className="text-sm text-gray-600">
-              All calculators comply with Iowa Technical Reference Manual (TRM) specifications
-            </p>
-          </div>
-        </div>
+
       </div>
 
       {/* New Project Dialog */}

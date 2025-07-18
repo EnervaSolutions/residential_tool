@@ -151,13 +151,25 @@ export default function HeatRecoveryVentilatorCalculator() {
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Wind className="text-cyan-600" />
-                  <span>Heat Recovery Ventilator Calculator</span>
-                </CardTitle>
-                <p className="text-sm text-gray-600">
-                  Installing HRV that meets SRE requirements of 75% in a natural gas heated home
-                </p>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-4">
+                    <Wind className="text-cyan-600 text-3xl" />
+                    <div>
+                      <h1 className="text-3xl font-bold text-gray-900">Heat Recovery Ventilator Calculator</h1>
+                      <p className="text-lg text-gray-600">Installing HRV that meets SRE requirements of 75% in a natural gas heated home</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <CommonValuesDialog 
+                      values={getCommonValues('hrv')} 
+                      title="Common Values for Heat Recovery Ventilator Calculations"
+                    />
+                    <Button onClick={handleSaveToProject} className="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-2" disabled={saveToProject.isPending}>
+                      <Save className="w-4 h-4 mr-2" />
+                      {saveToProject.isPending ? "Saving..." : "Save to Project"}
+                    </Button>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
                 <Form {...form}>
