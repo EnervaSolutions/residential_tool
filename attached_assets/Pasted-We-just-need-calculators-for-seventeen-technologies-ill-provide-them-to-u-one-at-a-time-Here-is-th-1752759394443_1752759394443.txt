@@ -1,0 +1,29 @@
+We just need calculators for seventeen technologies, ill provide them to u one at a time. Here is the first one:
+
+Technology name: Window Replacement
+
+Category: Fenestration
+Lifetime: 20 Source: Iowa Energy Efficiency Statewide Technical Reference Manual – Volume 2: Residential Measures
+---
+🔹 SECTION: Measure Overview (text blocks)
+
+Measure Description: Installing triple pane windows with a USI value of 1.22, instead of windows with a USI value of 2.
+Base Case: New window with U value of 2.0
+Efficient Case: New window with U value of 1.22
+Source of Energy Savings Estimates: Iowa TRM, version 5, volume 2, 2.6.8 Efficient Windows - Page 314
+Energy Savings Calculation Approach: Heating Savings = ((Ubaseline - Uupgrade) * AreaWindow * HDD * 24 * ADJwindow * ConversionfromkWhtoGJ * ConversionfromWhtokWh)) / EfficiencyofHeatingSystem Cooling Savings = ((Ubaseline - Uupgrade) * AreaWindow * CDD * 24 * ADJwindow * ConversionfromkWhtoGJ * ConversionfromWhtokWh)) / (Conversion from BtutokBtu * EfficiencyofCoolingSystem)
+sql
+Copy
+Edit
+Note: Include the factor for the percentage of homes with air conditioning
+
+---
+🔹 SECTION: Calculation Values (user-editable, with default values from common values or sources)
+
+| Variable | Field Type | Default Value | Units | Source | |----------|------------|----------------|-------|--------| | Thermal Transmittance of Base Case Window (W/m2K), U Baseline | number | 2 | W/m²·K | Table 9.7.3.3, NBC 2015 | | Thermal Transmittance of Efficient Case Window (W/m2K), U Upgrade | number | 1.22 | W/m²·K | NRCan Requirement | | Window Area (m2) | number | 1.11484 | m² | Based on 3ft x 4ft | | Heating Degree Days (C-days) | number | 5092 | C-d | Common Value | | Cooling Degree Days (C-days) | number | 685 | C-d | Common Value | | Conversion Factor for Days to Hours | number | 24 | hrs/day | Constant | | Adjustment Factor - Calculation to Observed Results | number | 0.63 | — | Iowa TRM | | DUA (Discretionary Use Adjustment) | number | 0.75 | — | Iowa TRM | | Efficiency of Heating System | number | 0.8 | — | Common Values | | Efficiency of Cooling System (SEER) | number | 13.40 | SEER | Common Values | | Percentage of Air Conditioning | number | 37 | % | Common Values | | Conversion Factor for Wh to kWh | number | 0.001 | — | Constant | | Conversion Factor from Btu to kBtu | number | 1000 | — | Constant | | Conversion Factor for kWh to GJ | number | 0.0036 | — | Constant |
+All common values should be editable by the user but default to the listed value.
+
+---
+🔹 SECTION: Outputs (live-calculated)
+
+| Output Field | Formula (generalized) | Unit | |--------------|------------------------|------| | Annual Energy Savings - Gas | ((Ubaseline - Uupgrade) * AreaWindow * HDD * 24 * ADJwindow * ConversionfromkWhtoGJ * ConversionfromWhtokWh) / EfficiencyofHeatingSystem | GJ | | Annual Energy Savings - Electricity | ((Ubaseline - Uupgrade) * AreaWindow * CDD * 24 * ADJwindow * ConversionfromkWhtoGJ * ConversionfromWhtokWh * DUA * %AirConditioning) / (Conversion from Btu to kBtu * EfficiencyofCoolingSystem) | GJ | ---

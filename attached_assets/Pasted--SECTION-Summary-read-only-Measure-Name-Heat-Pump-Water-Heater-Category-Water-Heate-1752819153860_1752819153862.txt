@@ -1,0 +1,53 @@
+
+🔹 SECTION: Summary (read-only)
+
+- Measure Name: Heat Pump Water Heater
+- Category: Water Heater
+- Lifetime: 15  
+  Source: Illinois Statewide Technical Reference Manual — 5.4.3 Heat Pump Water Heaters
+
+---
+
+🔹 SECTION: Measure Overview
+
+- Measure Description: Heat Pump water heater in place of a standard water heater
+- Base Case: Natural Gas water heater
+- Efficient Case: Heat Pump Water Heater with EF of 2.0
+- Source of Energy Savings Estimates: MID-ATLANTIC TECHNICAL REFERENCE MANUAL VERSION 8 / May 2018 - Page 192
+- Energy Savings Calculation Approach:
+Savings = (kBTU_req / 3.413) × ((1 / EFbase) - (1 / EFee)) × ConversionFactorFromkWhToGJ
+
+yaml
+Copy
+Edit
+
+---
+
+🔹 SECTION: Calculation Values
+
+| Variable | Field Type | Default Value | Units | Source |
+|----------|------------|----------------|-------|--------|
+| kBTU_req (Required annual heating output of DHW system) | calculated | = GPD × Density × SH × TempRise × 365 / 1000 | kBTU/year | Derived |
+| Gallons Used per Day (GPD) | number | 19.81 | gallons | NRCan |
+| Density of water | number | 8.33 | lb/gallon | Constant |
+| Specific heat of water | number | 1 | BTU/lb·°F | Constant |
+| Water Temperature into Tank | number | 46.04 | °F | Edmonton Water Report |
+| Water Temperature Exit from Tank | number | 140 | °F | National Plumbing Code 2015 |
+| WaterTempRise | calculated | ExitTemp - InletTemp | °F | Calculated |
+| Conversion Factor from kWh to GJ | number | 0.0036 | — | Constant |
+| Energy Factor of Heat Pump (EFee) | number | 2 | — | Mid Atlantic TRM |
+| Energy Factor of Gas Water Heater (EFbase) | number | 0.8 | — | 'Common Values'!C9 |
+
+---
+
+🔹 SECTION: Outputs (calculated live)
+
+| Output Field | Formula | Units |
+|--------------|---------|--------|
+| **Annual Energy Savings - Heat Pump Water Heater replacing Gas** | `(kBTU_req / 3.413) × ((1 / EFbase) - (1 / EFee)) × ConversionFactorFromkWhToGJ` | GJ |
+
+---
+
+💡 Notes:
+- Match field names and order exactly.
+- Allow user to see all input fields and override them.

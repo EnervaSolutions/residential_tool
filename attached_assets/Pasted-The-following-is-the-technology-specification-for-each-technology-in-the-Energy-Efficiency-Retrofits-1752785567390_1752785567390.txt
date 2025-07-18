@@ -1,0 +1,65 @@
+The following is the technology specification for each technology in the Energy Efficiency Retrofits Program (EERP)[ms1.1]. 
+Technology Name	Technology Specification Required	Suggested Documentation Requirements[ms2.1]
+ENERGY STAR® Replacement Window	Replace a window in a pre-existing rough opening with an ENERGY STAR® certified window. The ENERGY STAR® window should have a U value of 1.22 W/m2K or lower.	•	Proof of purchase 
+•	Photo(s) of installed windows
+•	Photo of ENERGY STAR label
+ENERGY STAR® Replacement Door	Replace a door in a pre-existing rough opening with an ENERGY STAR® certified door. The ENERGY STAR® door should have a U value of 0.21 Btu/h∙ft2◦F or lower.	•	Proof of purchase 
+•	Photo(s) of installed windows
+•	Photo of ENERGY STAR label
+Air Sealing 	Improve the air tightness of your home by 10%. Eligible activities include sealing, caulking, weatherproofing etc.	•	Proof of purchase
+Drain Water Heat Recovery for Natural Gas Water Heating	Install a new device which satisfies CSA B55.1 and CSA B55.2 and is listed within NRCan’s Hot2000 residential energy modeling software with a minimum heat recovery rate of 25%.	•	Proof of purchase
+•	Photo of installed device
+•	Photo of device nameplate or placard showing model and serial number
+Drain Water Heat Recovery for Electric Water Heating	Install a new device which satisfies CSA B55.1 and CSA B55.2 and is listed within NRCan’s Hot2000 residential energy modeling software with a minimum heat recovery rate of 25%.	•	Proof of purchase
+•	Photo of installed device
+•	Photo of device nameplate or placard showing model and serial number
+ENERGY STAR® Heat Pump Water Heater Replacing Gas Water Heater	Replace the primary domestic hot water heating appliance with an ENERGY STAR® certified electric heat pump appliance. The Energy Factor for the Heat Pump Water Heater should be a minimum of 2.0.	•	Proof of purchase
+•	Photo of installed device
+•	Photo of device nameplate or placard showing model and serial number
+ENERGY STAR® Heat Pump Water Heater Replacing Electric Water Heater	Replace the primary domestic hot water heating appliance with an ENERGY STAR® certified electric heat pump appliance. The Energy Factor for the Heat Pump Water Heater should be a minimum of 2.0.	•	Proof of purchase
+•	Photo of installed device
+•	Photo of device nameplate or placard showing model and serial number
+HVI Certified Heat Recovery Ventilator	Install or replace HRV which is certified by the Home Ventilating Institute (HVI) and listed in Section 3 of their Certified Products Directory. The HRV must have a sensible recovery efficiency greater than 75%. If replacing an existing HRV, the efficiency of the new unit must be higher than the replaced unit.[ms3.1]	•	Proof of purchase
+•	Photo of installed device
+•	Photo of device nameplate or placard showing model and serial number
+•	If the device is a replacement, then provide a photo of the old device and a photo of the old device’s nameplate or placard showing model and serial number
+ENERGY STAR® Smart Thermostat	Install an ENERGY STAR® certified smart thermostat.
+	•	Proof of purchase
+•	Photo of installed device
+•	Photo of device nameplate or placard showing model and serial number
+ENERGY STAR® Ground Source Heat Pump	Install a ground source heat pump central heating system by a an IGSHPA certified installer, which satisfies CSA Standard C448, and where the heat pump itself is ENERGY STAR rated.
+
+	•	Proof of purchase
+•	Confirmation of IGSHPA certification of installer
+•	Photo of installed device
+•	Photo of device nameplate or placard showing model and serial number
+ENERGY STAR Air Source Heat Pump – Ductless Mini-Split Heat Pump	Install an ENERGY STAR mini-split ductless heat pump heating system, where the rated heat capacity is sufficient to satisfy at least 50% of the homes heating load. The new heat pump [CZ4.1]should have a minimum SEER of 15 and COP of 2.72/HSPF of 8.2.	•	Proof of purchase
+•	Photo of installed device
+•	Photo of device nameplate or placard showing model and serial number
+•	AHRI reference number
+ENERGY STAR Air Source Heat Pump – Replacing Existing Heating and Cooling Systems	Install an ENERGY STAR air source heat pump central heating system, where the rated heat capacity is sufficient to satisfy at least 50% of the homes heating load. The new heat pump should have a minimum SEER of 15 and COP of 2.72/HSPF of 8.2.
+	•	Proof of purchase
+•	Photo of installed device
+•	Photo of device nameplate or placard showing model and serial number
+•	AHRI reference number
+ENERGY STAR Air Source Heat Pump – Replacing Existing Air Source Heat Pump	Install an ENERGY STAR air source heat pump central heating system, where the rated heat capacity is sufficient to satisfy at least 50% of the homes heating load. The new heat pump should have a minimum SEER of 15 and COP of 2.72. /HSPF of 8.2.
+	•	Proof of purchase
+•	Photo of installed device
+•	Photo of device nameplate or placard showing model and serial number
+•	AHRI reference number
+Attic Insulation	Increase the insulation level to at least R-55 for attic spaces, or R-28 for flat or cathedral ceilings for a minimum of 20% of the total ceiling area	•	Proof of purchase
+•	Photo of insulated area
+•	Photo showing measurement of insulation[ms5.1] level•	
+Foundation Insulation	Increase the insulation level by a minimum of R-12 (nominal) for a minimum of 20% of foundation level wall area (concrete/stone and/or wood frame constructed pony walls).	•	Proof of purchase
+•	Photo of insulated area
+•	Photo showing measurement of insulation[ms6.1] level•	
+Exterior Wall Insulation	Increase the insulation level by a minimum of R-10 (nominal) for a minimum of 20% of the total exterior wall area.	•	Proof of purchase
+•	Photo of insulated area
+•	Photo showing measurement of insulation[ms7.1] level•	
+Solar PV	Solar panels must be permanently mounted. They can be on the house or ground as long as they are on the property of the house associated with your application. All equipment must be new, owned by the program participant and purchased in Canada. The PV system equipment needs to have warranty. Total system peak power capacity must be equal to or greater than 1.0 kW DC.
+	•	Proof of purchase
+•	Photo of installed solar system
+•	Copy of grid-connection approval if the solar system is grid connected
+
+
+

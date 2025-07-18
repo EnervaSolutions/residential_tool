@@ -1,0 +1,55 @@
+🔹 SECTION: Summary (read-only)
+
+- Measure Name: Heat Recovery Ventilator
+- Category: Space Heating
+- Lifetime: 15  
+  Source: Iowa Energy Efficiency Statewide Technical Reference Manual — 2.4.8 Energy Recovery Ventilator
+
+---
+
+🔹 SECTION: Measure Overview
+
+- Measure Description: Installing HRV that meets SRE requirements of 75% in a natural gas heated home
+- Base Case: No HRV with natural gas furnace
+- Efficient Case: HRV with recovery efficiency of 75% with natural gas furnace
+- Source of Energy Savings Estimates: Iowa Energy Efficiency Statewide Technical Reference Manual — 2.4.8
+- Energy Savings Calculation Approach:
+Savings = MinimumExhaustFlowRate × SpecificHeatCapacityAir × DensityAirRoomTemperature × HDD × 24 × (SRE_Upgrade - SRE_Baseline) / HeatingSystemEfficiency
+
+yaml
+Copy
+Edit
+
+---
+
+🔹 SECTION: Calculation Values
+
+| Variable | Field Type | Default Value | Units | Source |
+|----------|------------|----------------|-------|--------|
+| MinimumExhaustFlowRate | number | 100 | L/s | ASHRAE Standard 62.2 |
+| SpecificHeatCapacityAir | number | 1.005 | kJ/kg·K | ASHRAE |
+| DensityAirRoomTemperature | number | 1.225 | kg/m³ | ASHRAE |
+| HeatingDegreeDays (HDD) | number | 5092 | °C·days | 'Common Values'!E4 |
+| ConversionFactor_DaysToHours | number | 24 | — | Constant |
+| SensibleRecoveryEfficiency_Upgrade | number | 0.75 | — | Program min value |
+| SensibleRecoveryEfficiency_Baseline | number | 0 | — | Assume HRV not installed |
+| HeatingSystemEfficiency | number | 0.85 | — | 'Common Values'!C8 |
+| Conversion_L_to_m3 | number | 0.001 | — | Constant |
+| Conversion_kJ_to_GJ | number | 0.000001 | — | Constant |
+| Conversion_Hours_to_Seconds | number | 3600 | — | Constant |
+
+---
+
+🔹 SECTION: Outputs (calculated live)
+
+| Output Field | Formula | Units |
+|--------------|---------|--------|
+| **Annual Energy Savings - Gas** | `MinimumExhaustFlowRate × SpecificHeatCapacityAir × DensityAirRoomTemperature × HDD × 24 × (SRE_Upgrade - SRE_Baseline) / HeatingSystemEfficiency × Conversion_kJ_to_GJ × Conversion_L_to_m3` | GJ |
+
+---
+
+📝 Notes:
+- Ensure all inputs from 'Common Values' are prefilled and locked where applicable.
+- All formulas must dynamically recalculate when any input changes.
+- Use tooltips for each variable to show the original source reference.
+- Ensure "Calculation Values" have read-only fields for intermediate formulas where applicable.

@@ -1,0 +1,57 @@
+🔹 SECTION: Summary (read-only)
+
+- Measure Name: Attic Insulation
+- Category: Building Envelope
+- Expected Useful Life: 30  
+  Source: Illinois Statewide Technical Reference Manual – 5.6.5 Ceiling/Attic Insulation
+
+---
+
+🔹 SECTION: Measure Overview
+
+- Measure Description: Improving attic insulation from R10 to R55-R60
+- Base Case: Existing insulation of R10
+- Efficient Case: Improved insulation of R55-R60
+- Source of Energy Savings Estimates: Illinois Statewide Technical Reference Manual – 5.6.5 Ceiling/Attic Insulation
+- Energy Savings Calculation Approach:  
+Energy Savings = Energy Savings from Cooling + Energy Savings from Heating
+
+yaml
+Copy
+Edit
+
+---
+
+🔹 SECTION: Calculation Values
+
+| Variable | Field Type | Default Value | Units | Source |
+|----------|------------|----------------|-------|--------|
+| Percentage of Air Conditioning | number | 37 | % | Common Values |
+| R New | number | 55 | — | Based on R55-R60 |
+| R Old | number | 10 | — | Existing insulation |
+| Area of Insulated Attic | number | = 'Common Values'!E17 / 2 | ft² | Assumes 2-storey home |
+| Attic Framing Factor | number | 0.07 | — | Illinois TRM |
+| Number of hours in a day | number | 24 | hours | Constant |
+| CDD | number | 685 | C-d | Common Values |
+| Discretionary Use Adjustment | number | 0.75 | — | Illinois TRM |
+| BTU to kBTU | number | 1000 | — | Constant |
+| Efficiency of Air Conditioning | number | 13.4 | SEER | Common Values |
+| Adjustment for cooling savings | number | 1.14 | — | Illinois TRM |
+| HDD | number | 5092 | C-d | Common Values |
+| Efficiency of heating system | number | 0.8 | — | Common Values |
+| BTU to Therm | number | 100000 | — | Constant |
+| Adjustment for gas heating savings | number | 0.76 | — | Illinois TRM |
+| kWh to GJ | number | 0.0036 | — | Constant |
+| Therm to GJ | number | 0.105506 | — | Constant |
+
+---
+
+🔹 SECTION: Outputs (live-calculated)
+
+| Output Field | Formula (generalized) | Units |
+|--------------|------------------------|--------|
+| Annual Energy Savings - Electric Cooling | (((((1/R_New - 1/R_Old) × Area × (1 - FramingFactor)) × DUA × HoursPerDay × CDD) / (BTUtokBTU × AC_Efficiency)) × kWhToGJ | GJ |
+| Annual Energy Savings - Gas Heating | ((((1/R_New - 1/R_Old) × Area × (1 - FramingFactor)) × HDD) / (BTUtoTherm × HeatingEfficiency) × AdjustmentForGas) × ThermToGJ | GJ |
+| Annual Energy Savings - Total | Sum of the two formulas above | GJ |
+
+---

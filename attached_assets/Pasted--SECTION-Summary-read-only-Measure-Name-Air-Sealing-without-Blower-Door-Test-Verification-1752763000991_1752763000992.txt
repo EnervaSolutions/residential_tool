@@ -1,0 +1,57 @@
+🔹 SECTION: Summary (read-only)
+
+- Measure Name: Air Sealing without Blower Door Test Verification
+- Category: Building Envelope
+- Lifetime: 15  
+  Source: Wisconsin Focus on Energy, 2020 Technical Reference Manual, pg 848
+
+---
+
+🔹 SECTION: Measure Overview
+
+- Measure Description: Air Sealing without Blower Door Test
+- Base Case: Standard house with an average infiltration rate of 1.5 air changes per hour and natural gas heating with AFUE of 85%
+- Efficient Case: 10% reduction in infiltration rate
+- Source of Energy Savings Estimates: Wisconsin Focus on Energy, 2020 Technical Reference Manual, pg 848
+
+- Energy Savings Calculation Approach:
+Energy Savings = [1.08 × VolumeRateofInfiltrationbyAir × (ThermostatSetPointTemp – OutsideTemp) / (HeatingSystemEfficiency × BTUtoThermsConversion)]
+× AnnualHourswhereOutsideTemperatureisbelowThermostatSetPointTemperature
+× SavingsFraction
+× ThermstoGJconversion
+
+yaml
+Copy
+Edit
+
+---
+
+🔹 SECTION: Calculation Values
+
+| Variable | Field Type | Default Value | Units | Source |
+|----------|------------|----------------|-------|--------|
+| 1.08 Factor | number | 1.08 | — | Wisconsin Focus on Energy |
+| Volume Rate of Infiltration by Air (CFM) | calculated | = C20 × C21 × C22 / 60 | CFM | Formula based |
+| Air Changes (air changes per hour) | number | 1.5 | ACH | RETScreen |
+| Floor Area (square feet) | number | 2099 | ft² | Common Values |
+| Ceiling Height (feet) | number | 9 | ft | Common Values |
+| Thermostat Set Point Temperature (F) | number | 72 | °F | Common Value |
+| Outside Temperature (F) | number | 13.3 | °F | RETScreen / ASHRAE |
+| Temperature Difference (F) | calculated | = (Thermostat - OutsideTemp) | °F | Weather data |
+| Heating System Efficiency | number | 0.8 | — | Common Values |
+| Conversion Factor for BTU to Therms | number | 100000 | — | Constant |
+| Annual Hours where Outside Temperature is below Thermostat Set Point Temperature (hours) | number | 5544 | hrs | RETScreen |
+| Savings Fraction | number | 0.1 | — | Wisconsin Focus on Energy |
+| Conversion Factor for Therms to GJ | number | 0.105506 | — | Constant |
+
+Common values should be editable but default to the values referenced in the shared “Common Values” dataset.
+
+---
+
+🔹 SECTION: Output
+
+| Output Field | Formula | Units |
+|--------------|---------|--------|
+| Annual Energy Savings - Gas | = (C18 × C19 × C25 / (C26 × C27)) × C28 × C29 × C30 | GJ |
+
+---

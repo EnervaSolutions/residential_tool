@@ -1,0 +1,52 @@
+
+🔹 SECTION: Measure Overview
+
+- Measure Description: Energy and demand saving are realized through reductions in the building cooling and heating loads.
+- Base Case Description: Doors with area of 2m² and with R-Value of 2.839
+- Efficient Case Description: Doors with area of 2m² with R-Value of 4.76
+- Source of Heating and Cooling Energy Savings Estimates: Iowa TRM 2021 Vol. 2: Residential Measures, v.5, 2.6.5 and ASHRAE Fundamentals Handbook
+
+- Heating Energy Savings Estimates (kWh):  
+((1/C20 - 1/C21) * C23 * C24 * 24) / (3412 * C26)
+
+diff
+Copy
+Edit
+- Cooling Energy Savings Estimates (kWh):  
+((1/C20 - 1/C21) * C23 * C25 * 24 * C29) / (1000 * C27)
+
+yaml
+Copy
+Edit
+
+---
+
+🔹 SECTION: Calculation Values
+
+| Variable | Field Type | Default Value | Units | Source |
+|----------|------------|----------------|-------|--------|
+| Conversion Factor (W/m²·K to BTU/h·ft²·°F) | number | 5.678 | — | Constant |
+| R_existing = Existing door heat loss coefficient [(hr-⁰F-ft²)/Btu] | calculated | = 1 / (2 / C19) | — | Alberta Building Code min USI = 2 |
+| R_new = New door heat loss coefficient [(hr-⁰F-ft²)/Btu] | calculated | = 1 / 0.21 | — | NRCan Requirement |
+| Door Area (m²) | number | 2 | m² | Assumed |
+| Door Area (ft²) | calculated | = 10.76 × C22 | ft² | Conversion |
+| Heating Degree Days (HDD) | number | 5092 | C-d | Common Values |
+| Cooling Degree Days (CDD) | number | 685 | C-d | Common Values |
+| Efficiency of Heating System | number | 0.8 | — | Common Values |
+| Seasonal Efficiency of Cooling System (SEER) | number | 13.40 | — | Common Values |
+| Percentage of Air Conditioning | number | 37 | % | Common Values |
+| DUA | number | 0.75 | — | Iowa TRM |
+| Conversion Factor for kWh to GJ | number | 0.0036 | — | Constant |
+
+All common values should be user-editable but prefilled using your shared reference table.
+
+---
+
+🔹 SECTION: Outputs
+
+| Output Field | Formula (generalized) | Unit |
+|--------------|------------------------|------|
+| Annual Energy Savings - Gas | Heating_kWh × Conversion_to_GJ | GJ |
+| Annual Energy Savings - Electricity | Cooling_kWh × Conversion_to_GJ × DUA | GJ |
+
+---

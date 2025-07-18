@@ -1,0 +1,58 @@
+🔹 SECTION: Summary (read-only)
+
+- Measure Name: Ground Source Heat Pump  
+- Category: Space Heating & Cooling  
+- Lifetime: 15 years  
+  Source: 2020 Technical Reference Manual, Public Service Commission of Wisconsin
+
+---
+
+🔹 SECTION: Measure Overview
+
+- Measure Description: Ground Source Heat Pump, Natural Gas and Electric Backup  
+- Base Case: Heating Equipment with HSPF 7.7 (COP≈2.26) and Cooling Equipment with SEER 13  
+- Efficient Case: New GSHP with Heating COP 4.18 and Cooling EER 22.43  
+- Source of Energy Savings Estimates: 2020 TRM, Public Service Commission of Wisconsin, Pages 826–827  
+- Annual Energy Savings Calculation Approach:  
+kWhSAVED =
+(EFLH_cooling * Btu/h_cool * (1 / SEER_base – 1 / (EER_efficient * 1.02)) / 1,000)
++
+(EFLH_heating * Btu/h_heat * (1 / HSPF_base – 1 / (COP_ee * 3.412)) / 1,000)
+
+yaml
+Copy
+Edit
+
+---
+
+🔹 SECTION: Calculation Values
+
+| Variable | Field Type | Value | Units | Source |
+|----------|------------|--------|--------|--------|
+| EFLH_heating | locked | 'Common Values'!C2 | hours | Common Values Sheet |
+| EFLH_cooling | locked | 'Common Values'!C3 | hours | Common Values Sheet |
+| SEER_base | locked | 'Common Values'!C11 | ratio | Common Values Sheet |
+| EER_efficient equipment | locked | 22.43 | ratio | 2020 TRM, Public Service Commission of Wisconsin |
+| Factor to determine SEER based on EER | locked | 1.02 | multiplier | 2020 TRM |
+| Kilowatt conversion factor | constant | 1000 | W/kW | Engineering constant |
+| Btu/h_heat | locked | 'Common Values'!E14 | BTU/hr | Common Values Sheet |
+| Btu/h_cool | locked | 'Common Values'!E15 | BTU/hr | Common Values Sheet |
+| HSPF_base | locked | 7.7 | ratio | Table 503.2.3(2), IECC 2009 |
+| COP_ee | locked | 4.18 | ratio | 2020 TRM |
+| Conversion from watts to Btu | constant | 3.412 | multiplier | Engineering constant |
+
+---
+
+🔹 SECTION: Outputs (calculated live)
+
+| Output | Formula | Units |
+|--------|---------|--------|
+| Annual Energy Savings - Gas | `((EFLH_heating × Btu/h_heat × ((1 / HSPF_base) – (1 / (COP_ee × 3.412))) / 1000) / 277.78` | GJ |
+| Annual Energy Savings - Electricity | `((EFLH_cooling × Btu/h_cool × ((1 / SEER_base) – (1 / (EER_efficient × 1.02))) / 1000) / 277.78` | GJ |
+
+---
+
+📝 Notes:
+- Display both outputs simultaneously.
+- Lock all values sourced from the “Common Values” sheet.
+- Provide hoverable tooltips for all source references.

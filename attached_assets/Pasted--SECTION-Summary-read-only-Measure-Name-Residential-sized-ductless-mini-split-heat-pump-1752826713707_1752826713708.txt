@@ -1,0 +1,51 @@
+
+📋 SECTION: Summary (read-only)
+
+- Measure Name: Residential-sized ductless mini-split heat pump replacing existing furnace  
+- Category: Space Heating  
+- Lifetime: 18 years  
+- Source: Iowa Energy Efficiency Statewide Technical Reference Manual — 2.4.7 Ductless Heat Pumps
+
+---
+
+📋 SECTION: Measure Overview
+
+- Description: Installing Ductless Mini Split with 1 Head to Replace Furnace and add cooling. Furnace remains as emergency backup.  
+- Base Case: Existing furnace, no cooling  
+- Efficient Case: DMSHP with COP of 2.72  
+- Source of Energy Savings Estimates:  
+  - Mid-Atlantic TRM Version 8 (May 2018), Page 90  
+  - Cadmus “Ductless Mini-Split Heat Pump Impact Evaluation”, Dec 30, 2016  
+- Energy Savings - Natural Gas: Energy Usage for Space Heating  
+- Energy Savings - Electricity: Negative of electricity consumed for heating and cooling (see detailed formulas below)
+
+---
+
+📋 SECTION: Inputs and Constants
+
+| Variable | Field Type | Value | Units | Source |
+|----------|------------|--------|--------|--------|
+| Annual Natural Gas Use | locked | Common Values!C13 | GJ | Common Values |
+| Annual Space Heating Energy | formula | `=Annual Gas Use × 0.737` | GJ | NRCan: 73.7% gas is for heating |
+| Furnace Efficiency | locked | Common Values!C8 | % | Common Values |
+| House Gas Heating Capacity | locked | Common Values!E14 | BTU/h | Common Values |
+| House Cooling Capacity | locked | Common Values!E15 | BTU/h | Common Values |
+| EFLH_heating | locked | Common Values!C2 | hours | Common Values |
+| EFLH_cooling | locked | Common Values!C3 | hours | Common Values |
+| DMSHP SEER | locked | 15 | SEER | ENERGY STAR (24k–36k BTU) |
+| DMSHP HSPF | locked | 8.2 | HSPF | Cadmus 2016 |
+| DMSHP Factor | locked | 0.25 | multiplier | Cadmus 2016 |
+| W to kWh Conversion | constant | 1000 | W/kW | Engineering constant |
+| kWh to GJ Conversion | constant | 0.0036 | multiplier | Cadmus 2016 |
+
+---
+
+📊 SECTION: Calculations and Outputs
+
+| Output | Formula | Units |
+|--------|---------|--------|
+| Annual Energy Savings - Gas | `=Annual Space Heating Energy` | GJ |
+| Annual Energy Savings - Heating Electricity Consumption | `= -1 × (House Gas Heating Capacity × EFLH_heating) ÷ HSPF ÷ 1000 × 0.0036` | GJ |
+| Annual Energy Savings - Cooling Electricity Consumption | `= -1 × (House Cooling Capacity × EFLH_cooling) ÷ SEER ÷ 1000 × 0.0036` | GJ |
+
+---

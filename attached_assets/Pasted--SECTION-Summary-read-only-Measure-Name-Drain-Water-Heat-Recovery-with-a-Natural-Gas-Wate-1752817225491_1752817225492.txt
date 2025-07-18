@@ -1,0 +1,55 @@
+🔹 SECTION: Summary (read-only)
+
+- Measure Name: Drain Water Heat Recovery with a Natural Gas Water Heater
+- Category: Domestic Water Heating
+- Lifetime: 30  
+  Source: 2022 Illinois Statewide Technical Reference Manual for Energy Efficiency, Version 10.0
+
+---
+
+🔹 SECTION: Measure Overview
+
+- Measure Description: Installing a drain water heat recovery system in a house with a natural gas storage water heater
+- Base Case: Standard water heater with drain water with the incoming water temperature of 46.04 °F and leaving water of 101 °F
+- Efficient Case: Drain water heat recovery system with recovery efficiency greater than 25%
+- Gas Water Heater Efficiency: = 'Common Values'!C9
+- Source of Energy Savings Estimates: Iowa TRM, vol 3, August 30, 2019, 3.2.6. Drainwater Heat Recovery - Page 65
+
+- Energy Savings Calculation Approach:
+Savings = ((Tout - Tin) × AnnualHotWaterUse × SpecificWeightWater × SpecificHeatWater × PracticalEffectivenessofDWHR × ConversionFromBTUtoTherm) ÷ RecoveryEfficiencyofDWHR × ConversionFromThermtoGJ
+
+yaml
+Copy
+Edit
+
+---
+
+🔹 SECTION: Calculation Values
+
+| Variable | Field Type | Default Value | Units | Source |
+|----------|------------|----------------|-------|--------|
+| Water Temperature Out of DWHR (Tout) | number | 101 | °F | Cadmus & Opinion Dynamics, 2013 |
+| Water Temperature Into DWHR (Tin) | number | 46.04 | °F | 2008 Edmonton Water Report |
+| Daily Hot Water Use | number | 19.81 | gallons/day | NRCan |
+| Annual Hot Water Use | calculated | = DailyUse × 365.25 | gallons/year | Constant: 365.25 days/year |
+| Specific Weight Water | number | 8.33 | lbs/gallon | Constant |
+| Specific Heat Water | number | 1 | Btu/lbm/°F | Constant |
+| Practical Effectiveness of DWHR | number | 0.25 | — | Iowa TRM 2019 |
+| Recovery Efficiency of DWHR | number | 0.78 | — | Iowa TRM 2019 |
+| Conversion Factor for BTU to Therms | number | 0.00001 | — | Constant |
+| Conversion Factor for Therms to GJ | number | 0.105506 | — | Constant |
+
+---
+
+🔹 SECTION: Outputs (calculated live)
+
+| Output Field | Formula | Units |
+|--------------|---------|--------|
+| **Annual Energy Recovered** | `(Tout - Tin) × AnnualHotWaterUse × SpecificWeightWater × SpecificHeatWater × PracticalEffectiveness × ConversionBTUtoTherm / RecoveryEfficiency × ConversionThermtoGJ` | GJ |
+| **Annual Fuel Saved** | `AnnualEnergyRecovered / GasWaterHeaterEfficiency` | GJ |
+
+---
+
+💡 Notes:
+- Match all field names and visual structure exactly.
+- Group sections as: Summary, Measure Overview, Inputs, Constants, Outputs.
