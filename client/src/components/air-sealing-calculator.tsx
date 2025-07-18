@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { Wind, Save, TrendingUp, Flame } from "lucide-react";
+import { CommonValuesDialog } from "./common-values-dialog";
+import { getCommonValues } from "@/data/common-values";
 import { Card, CardContent } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -148,14 +150,18 @@ export function AirSealingCalculator() {
         <div className="mb-8">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-4">
-              <Wind className="text-primary text-2xl" />
+              <Wind className="text-cyan-600 text-3xl" />
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Air Sealing Technology</h1>
-                <p className="text-sm text-gray-600">Energy Efficiency Retrofit Calculator</p>
+                <h1 className="text-3xl font-bold text-gray-900">Air Sealing Technology</h1>
+                <p className="text-lg text-gray-600">Energy Efficiency Retrofit Calculator</p>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <Button onClick={handleSave} className="bg-primary hover:bg-blue-700" disabled={saveCalculation.isPending}>
+            <div className="flex items-center space-x-3">
+              <CommonValuesDialog 
+                values={getCommonValues('air-sealing')} 
+                title="Common Values for Air Sealing Calculations"
+              />
+              <Button onClick={handleSave} className="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-2" disabled={saveCalculation.isPending}>
                 <Save className="w-4 h-4 mr-2" />
                 {saveCalculation.isPending ? "Saving..." : "Save to Project"}
               </Button>
@@ -168,13 +174,13 @@ export function AirSealingCalculator() {
           <div className="lg:col-span-2 space-y-8">
             
             {/* Measure Overview */}
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center space-x-3 mb-6">
-                  <div className="bg-primary bg-opacity-10 p-2 rounded-lg">
-                    <TrendingUp className="text-primary text-xl" />
+            <Card className="border-l-4 border-l-cyan-500">
+              <CardContent className="p-8">
+                <div className="flex items-center space-x-4 mb-8">
+                  <div className="bg-gradient-to-br from-cyan-500 to-cyan-600 p-3 rounded-xl shadow-lg">
+                    <TrendingUp className="text-white text-xl" />
                   </div>
-                  <h2 className="text-xl font-semibold text-gray-900">Measure Overview</h2>
+                  <h2 className="text-2xl font-bold text-gray-900">Measure Overview</h2>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

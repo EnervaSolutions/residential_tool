@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Save, Calculator, Home, Flame, TrendingUp } from "lucide-react";
+import { CommonValuesDialog } from "./common-values-dialog";
+import { getCommonValues } from "@/data/common-values";
 import { useToast } from "@/hooks/use-toast";
 import { 
   AtticInsulationCalculationInputs, 
@@ -144,15 +146,80 @@ export default function AtticInsulationCalculator() {
   };
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calculator className="h-6 w-6" />
-            Attic Insulation Calculator
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+    <>
+      <div className="p-8">
+        {/* Technology Header */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-4">
+              <Home className="text-purple-600 text-3xl" />
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Attic Insulation Technology</h1>
+                <p className="text-lg text-gray-600">Energy Efficiency Retrofit Calculator</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <CommonValuesDialog 
+                values={getCommonValues('attic-insulation')} 
+                title="Common Values for Attic Insulation Calculations"
+              />
+              <Button onClick={handleSave} className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2" disabled={saveMutation.isPending}>
+                <Save className="w-4 h-4 mr-2" />
+                {saveMutation.isPending ? "Saving..." : "Save to Project"}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-8">
+            
+            {/* Measure Overview */}
+            <Card className="border-l-4 border-l-purple-500">
+              <CardContent className="p-8">
+                <div className="flex items-center space-x-4 mb-8">
+                  <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-3 rounded-xl shadow-lg">
+                    <TrendingUp className="text-white text-xl" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Measure Overview</h2>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Technology Name</label>
+                      <div className="p-3 bg-gray-50 rounded-md text-gray-900 font-medium">Attic Insulation</div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                      <div className="p-3 bg-gray-50 rounded-md text-gray-600">Building Envelope</div>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Lifetime (Years)</label>
+                      <div className="p-3 bg-gray-50 rounded-md text-gray-600">20</div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Energy Savings</label>
+                      <div className="p-3 bg-gray-50 rounded-md text-gray-600">Heating & Cooling</div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Calculator Inputs */}
+            <Card className="border-l-4 border-l-purple-500">
+              <CardContent className="p-8">
+                <div className="flex items-center space-x-4 mb-8">
+                  <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-3 rounded-xl shadow-lg">
+                    <Calculator className="text-white text-xl" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Calculation Inputs</h2>
+                </div>
           <form className="space-y-6">
             {/* Insulation Properties */}
             <div className="space-y-4">
@@ -401,53 +468,57 @@ export default function AtticInsulationCalculator() {
               </div>
             </div>
           </form>
-        </CardContent>
-      </Card>
-
-      {/* Results Section */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="bg-green-100 p-2 rounded-lg">
-              <Calculator className="text-green-600 text-xl" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900">Calculation Results</h3>
+              </CardContent>
+            </Card>
           </div>
           
-          <div className="space-y-4">
-            <div className="p-4 bg-blue-50 rounded-lg">
-              <div className="flex items-center space-x-2 mb-2">
-                <TrendingUp className="text-blue-600 w-5 h-5" />
-                <span className="text-sm font-medium text-blue-900">Annual Energy Savings - Electric Cooling</span>
-              </div>
-              <p className="text-2xl font-bold text-blue-600">{(results?.electricitySavings || 0).toFixed(6)} GJ</p>
-            </div>
-            
-            <div className="p-4 bg-green-50 rounded-lg">
-              <div className="flex items-center space-x-2 mb-2">
-                <Flame className="text-green-600 w-5 h-5" />
-                <span className="text-sm font-medium text-green-900">Annual Energy Savings - Gas Heating</span>
-              </div>
-              <p className="text-2xl font-bold text-green-600">{(results?.gasSavings || 0).toFixed(6)} GJ</p>
-            </div>
-            
-            <div className="p-4 bg-yellow-50 rounded-lg">
-              <div className="flex items-center space-x-2 mb-2">
-                <Calculator className="text-yellow-600 w-5 h-5" />
-                <span className="text-sm font-medium text-yellow-900">Annual Energy Savings - Total</span>
-              </div>
-              <p className="text-2xl font-bold text-yellow-600">{(results?.totalSavings || 0).toFixed(6)} GJ</p>
-            </div>
+          {/* Results Section */}
+          <div className="lg:col-span-1">
+            <Card className="border-l-4 border-l-purple-500">
+              <CardContent className="p-8">
+                <div className="flex items-center space-x-4 mb-8">
+                  <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-3 rounded-xl shadow-lg">
+                    <TrendingUp className="text-white text-xl" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Energy Savings Results</h2>
+                </div>
+                
+                <div className="space-y-6">
+                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <Flame className="text-purple-600 text-xl" />
+                      <span className="text-lg font-semibold text-purple-800">Gas Savings</span>
+                    </div>
+                    <div className="text-3xl font-bold text-purple-900">
+                      {results.gasSavings.toFixed(6)} GJ
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <TrendingUp className="text-purple-600 text-xl" />
+                      <span className="text-lg font-semibold text-purple-800">Electricity Savings</span>
+                    </div>
+                    <div className="text-3xl font-bold text-purple-900">
+                      {results.electricitySavings.toFixed(6)} GJ
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <TrendingUp className="text-purple-600 text-xl" />
+                      <span className="text-lg font-semibold text-purple-800">Total Savings</span>
+                    </div>
+                    <div className="text-3xl font-bold text-purple-900">
+                      {results.totalSavings.toFixed(6)} GJ
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
-
-          <div className="mt-6">
-            <Button onClick={handleSave} className="w-full" disabled={saveMutation.isPending}>
-              <Save className="mr-2 h-4 w-4" />
-              {saveMutation.isPending ? "Saving..." : "Save to Project"}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </div>
+    </>
   );
 }

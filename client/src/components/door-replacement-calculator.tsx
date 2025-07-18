@@ -12,6 +12,8 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { insertDoorCalculationSchema } from "@shared/schema";
 import { calculateDoorSavings, type DoorCalculationInputs } from "@/lib/door-calculations";
+import { CommonValuesDialog } from "./common-values-dialog";
+import { getCommonValues } from "@/data/common-values";
 
 const defaultValues: DoorCalculationInputs = {
   conversionFactor: 5.678,
@@ -134,14 +136,18 @@ export function DoorReplacementCalculator() {
         <div className="mb-8">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-4">
-              <Home className="text-primary text-2xl" />
+              <Home className="text-orange-600 text-3xl" />
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Door Replacement Technology</h1>
-                <p className="text-sm text-gray-600">Energy Efficiency Retrofit Calculator</p>
+                <h1 className="text-3xl font-bold text-gray-900">Door Replacement Technology</h1>
+                <p className="text-lg text-gray-600">Energy Efficiency Retrofit Calculator</p>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <Button onClick={handleSave} className="bg-primary hover:bg-blue-700" disabled={saveDoorCalculation.isPending}>
+            <div className="flex items-center space-x-3">
+              <CommonValuesDialog 
+                values={getCommonValues('doors')} 
+                title="Common Values for Door Calculations"
+              />
+              <Button onClick={handleSave} className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2" disabled={saveDoorCalculation.isPending}>
                 <Save className="w-4 h-4 mr-2" />
                 {saveDoorCalculation.isPending ? "Saving..." : "Save to Project"}
               </Button>
@@ -153,13 +159,13 @@ export function DoorReplacementCalculator() {
           <div className="lg:col-span-2 space-y-8">
             
             {/* Measure Overview */}
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center space-x-3 mb-6">
-                  <div className="bg-primary bg-opacity-10 p-2 rounded-lg">
-                    <TrendingUp className="text-primary text-xl" />
+            <Card className="border-l-4 border-l-orange-500">
+              <CardContent className="p-8">
+                <div className="flex items-center space-x-4 mb-8">
+                  <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-3 rounded-xl shadow-lg">
+                    <TrendingUp className="text-white text-xl" />
                   </div>
-                  <h2 className="text-xl font-semibold text-gray-900">Measure Overview</h2>
+                  <h2 className="text-2xl font-bold text-gray-900">Measure Overview</h2>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
