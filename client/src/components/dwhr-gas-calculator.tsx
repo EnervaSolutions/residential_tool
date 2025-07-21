@@ -61,7 +61,7 @@ export default function DwhrGasCalculator() {
       specificHeatWater: 1,
       practicalEffectivenessDwhr: 0.25,
       recoveryEfficiencyDwhr: 0.78,
-      gasWaterHeaterEfficiency: 0.8,
+      gasWaterHeaterEfficiency: 0.58,
       conversionBtuToTherms: 0.00001,
       conversionThermsToGj: 0.105506,
     },
@@ -79,7 +79,7 @@ export default function DwhrGasCalculator() {
         specificHeatWater: parseFloat(data.specificHeatWater) || 1,
         practicalEffectivenessDwhr: parseFloat(data.practicalEffectivenessDwhr) || 0.25,
         recoveryEfficiencyDwhr: parseFloat(data.recoveryEfficiencyDwhr) || 0.78,
-        gasWaterHeaterEfficiency: parseFloat(data.gasWaterHeaterEfficiency) || 0.8,
+        gasWaterHeaterEfficiency: parseFloat(data.gasWaterHeaterEfficiency) || 0.58,
         conversionBtuToTherms: parseFloat(data.conversionBtuToTherms) || 0.00001,
         conversionThermsToGj: parseFloat(data.conversionThermsToGj) || 0.105506,
       });
