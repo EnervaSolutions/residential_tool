@@ -33,7 +33,7 @@ type DwhreElectricCalculationInputs = z.infer<typeof dwhreElectricInputSchema>;
 interface DwhreElectricCalculationResults {
   annualHotWaterUse: number;
   annualEnergyRecovered: number;
-  annualFuelSaved: number;
+  annualEnergySavedElectric: number;
 }
 
 export default function DwhrElectricCalculator() {
@@ -61,7 +61,7 @@ export default function DwhrElectricCalculator() {
       specificHeatWater: 1,
       practicalEffectivenessDwhr: 0.25,
       recoveryEfficiencyDwhr: 0.78,
-      electricWaterHeaterEfficiency: 0.95,
+      electricWaterHeaterEfficiency: 0.90,
       conversionBtuToTherms: 0.00001,
       conversionThermsToGj: 0.105506,
     },
@@ -79,7 +79,7 @@ export default function DwhrElectricCalculator() {
         specificHeatWater: parseFloat(data.specificHeatWater) || 1,
         practicalEffectivenessDwhr: parseFloat(data.practicalEffectivenessDwhr) || 0.25,
         recoveryEfficiencyDwhr: parseFloat(data.recoveryEfficiencyDwhr) || 0.78,
-        electricWaterHeaterEfficiency: parseFloat(data.electricWaterHeaterEfficiency) || 0.95,
+        electricWaterHeaterEfficiency: parseFloat(data.electricWaterHeaterEfficiency) || 0.90,
         conversionBtuToTherms: parseFloat(data.conversionBtuToTherms) || 0.00001,
         conversionThermsToGj: parseFloat(data.conversionThermsToGj) || 0.105506,
       });
@@ -128,13 +128,13 @@ export default function DwhrElectricCalculator() {
        inputs.recoveryEfficiencyDwhr) * 
       inputs.conversionThermsToGj;
     
-    // Annual Fuel Saved = Annual Energy Recovered ÷ Electric Water Heater Efficiency
-    const annualFuelSaved = annualEnergyRecovered / inputs.electricWaterHeaterEfficiency;
+    // Annual Energy Saved (Electric) = Annual Energy Recovered ÷ Electric Water Heater Efficiency
+    const annualEnergySavedElectric = annualEnergyRecovered / inputs.electricWaterHeaterEfficiency;
 
     return {
       annualHotWaterUse,
       annualEnergyRecovered,
-      annualFuelSaved,
+      annualEnergySavedElectric,
     };
   };
 
@@ -145,7 +145,7 @@ export default function DwhrElectricCalculator() {
       ...watchedValues,
       annualHotWaterUse: results.annualHotWaterUse,
       annualEnergyRecovered: results.annualEnergyRecovered,
-      annualFuelSaved: results.annualFuelSaved,
+      annualEnergySavedElectric: results.annualEnergySavedElectric,
     };
     saveToProject.mutate(calculationData);
   };
@@ -469,9 +469,9 @@ export default function DwhrElectricCalculator() {
                   <div className="p-4 bg-green-50 rounded-lg">
                     <div className="flex items-center space-x-2 mb-2">
                       <TrendingUp className="text-green-600 w-5 h-5" />
-                      <span className="text-sm font-medium text-green-900">Annual Fuel Saved</span>
+                      <span className="text-sm font-medium text-green-600">Annual Energy Savings - Electricity</span>
                     </div>
-                    <p className="text-2xl font-bold text-green-600">{results.annualFuelSaved.toFixed(6)} GJ</p>
+                    <p className="text-2xl font-bold text-green-600">{results.annualEnergySavedElectric.toFixed(6)} GJ</p>
                   </div>
                 </div>
               </CardContent>

@@ -23,7 +23,7 @@ const heatPumpWaterHeaterElectricInputSchema = z.object({
   waterTempExitFromTank: z.number().min(0),
   energyFactorHeatPump: z.number().min(0),
   energyFactorElectricWaterHeater: z.number().min(0).max(1),
-  conversionKwhToGj: z.number().min(0),
+  conversionKbtuToGj: z.number().min(0),
 });
 
 type HeatPumpWaterHeaterElectricCalculationInputs = z.infer<typeof heatPumpWaterHeaterElectricInputSchema>;
@@ -59,7 +59,7 @@ export default function HeatPumpWaterHeaterElectricCalculator() {
       waterTempExitFromTank: 140,
       energyFactorHeatPump: 2.0,
       energyFactorElectricWaterHeater: 0.9,
-      conversionKwhToGj: 0.0036,
+      conversionKbtuToGj: 0.001055056,
     },
   });
 
@@ -75,7 +75,7 @@ export default function HeatPumpWaterHeaterElectricCalculator() {
         waterTempExitFromTank: parseFloat(data.waterTempExitFromTank) || 140,
         energyFactorHeatPump: parseFloat(data.energyFactorHeatPump) || 2.0,
         energyFactorElectricWaterHeater: parseFloat(data.energyFactorElectricWaterHeater) || 0.9,
-        conversionKwhToGj: parseFloat(data.conversionKwhToGj) || 0.0036,
+        conversionKbtuToGj: parseFloat(data.conversionKbtuToGj) || 0.001055056,
       });
     }
   }, [project, form]);
@@ -118,7 +118,7 @@ export default function HeatPumpWaterHeaterElectricCalculator() {
     const annualEnergySavings = 
       (kbtuReq / 3.413) * 
       ((1 / inputs.energyFactorElectricWaterHeater) - (1 / inputs.energyFactorHeatPump)) * 
-      inputs.conversionKwhToGj;
+      inputs.conversionKbtuToGj;
 
     return {
       waterTempRise,
@@ -389,10 +389,10 @@ export default function HeatPumpWaterHeaterElectricCalculator() {
                         <h4 className="text-md font-medium text-gray-800 mb-3">Conversion Factor</h4>
                         <FormField
                           control={form.control}
-                          name="conversionKwhToGj"
+                          name="conversionKbtuToGj"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Conversion Factor from kWh to GJ</FormLabel>
+                              <FormLabel>Conversion Factor from kBtu to GJ</FormLabel>
                               <FormControl>
                                 <Input 
                                   type="number" 

@@ -5,7 +5,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Wind, TrendingUp, Save } from "lucide-react";
+import { Wind, TrendingUp, Save, Zap } from "lucide-react";
 import { CommonValuesDialog } from "./common-values-dialog";
 import { getCommonValues } from "@/data/common-values";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -23,7 +23,7 @@ const heatPumpWaterHeaterInputSchema = z.object({
   waterTempExitFromTank: z.number().min(0),
   energyFactorHeatPump: z.number().min(0),
   energyFactorGasWaterHeater: z.number().min(0).max(1),
-  conversionKwhToGj: z.number().min(0),
+  conversionKbtuToGj: z.number().min(0),
 });
 
 type HeatPumpWaterHeaterCalculationInputs = z.infer<typeof heatPumpWaterHeaterInputSchema>;
@@ -32,11 +32,13 @@ interface HeatPumpWaterHeaterCalculationResults {
   waterTempRise: number;
   kbtuReq: number;
   annualEnergySavings: number;
+  annualEnergySavingsElectric: number;
 }
 
 export default function HeatPumpWaterHeaterCalculator() {
   const { toast } = useToast();
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   useEffect(() => {
     const projectId = localStorage.getItem("currentProjectId");
@@ -44,7 +46,7 @@ export default function HeatPumpWaterHeaterCalculator() {
   }, []);
 
   // Fetch current project to load saved data
-  const { data: project } = useQuery({
+  const { data: project, isLoading } = useQuery({
     queryKey: ["/api/projects", currentProjectId],
     enabled: !!currentProjectId,
   });
@@ -59,7 +61,7 @@ export default function HeatPumpWaterHeaterCalculator() {
       waterTempExitFromTank: 140,
       energyFactorHeatPump: 2.0,
       energyFactorGasWaterHeater: 0.8,
-      conversionKwhToGj: 0.0036,
+      conversionKbtuToGj: 0.001055056,
     },
   });
 
@@ -75,8 +77,12 @@ export default function HeatPumpWaterHeaterCalculator() {
         waterTempExitFromTank: parseFloat(data.waterTempExitFromTank) || 140,
         energyFactorHeatPump: parseFloat(data.energyFactorHeatPump) || 2.0,
         energyFactorGasWaterHeater: parseFloat(data.energyFactorGasWaterHeater) || 0.8,
-        conversionKwhToGj: parseFloat(data.conversionKwhToGj) || 0.0036,
+        conversionKbtuToGj: parseFloat(data.conversionKbtuToGj) || 0.001055056,
       });
+      setIsDataLoaded(true);
+    } else if (project && !project.heatPumpWaterHeaterData) {
+      // No saved data exists, use defaults
+      setIsDataLoaded(true);
     }
   }, [project, form]);
 
@@ -114,20 +120,33 @@ export default function HeatPumpWaterHeaterCalculator() {
     // kBTU_req = GPD × Density × SH × TempRise × 365 / 1000
     const kbtuReq = (inputs.gallonsPerDay * inputs.densityOfWater * inputs.specificHeatOfWater * waterTempRise * 365) / 1000;
     
+    console.log("KBTUtoGJ rate:", inputs.conversionKbtuToGj);
+    
     // Annual Energy Savings = (kBTU_req / 3.413) × ((1 / EFbase) - (1 / EFee)) × ConversionFactorFromkWhToGJ
     const annualEnergySavings = 
       (kbtuReq / 3.413) * 
       ((1 / inputs.energyFactorGasWaterHeater) - (1 / inputs.energyFactorHeatPump)) * 
-      inputs.conversionKwhToGj;
+      inputs.conversionKbtuToGj;
+
+    const annualEnergySavingsElectric = 
+      (kbtuReq * inputs.conversionKbtuToGj) / inputs.energyFactorHeatPump;
 
     return {
       waterTempRise,
       kbtuReq,
       annualEnergySavings,
+      annualEnergySavingsElectric,
+
     };
   };
 
-  const results = calculateResults(watchedValues);
+  // Only calculate results if data is loaded to prevent flash
+  const results = isDataLoaded ? calculateResults(watchedValues) : {
+    waterTempRise: 0,
+    kbtuReq: 0,
+    annualEnergySavings: 0,
+    annualEnergySavingsElectric: 0,
+  };
 
   const handleSaveToProject = () => {
     const calculationData = {
@@ -135,9 +154,21 @@ export default function HeatPumpWaterHeaterCalculator() {
       waterTempRise: results.waterTempRise,
       kbtuReq: results.kbtuReq,
       annualEnergySavings: results.annualEnergySavings,
+      annualEnergySavingsElectric: results.annualEnergySavingsElectric,
     };
     saveToProject.mutate(calculationData);
   };
+
+  // Show loading state while data is being fetched
+  if (isLoading) {
+    return (
+      <div className="p-8">
+        <div className="flex items-center justify-center min-h-96">
+          <div className="text-lg text-gray-600">Loading calculator...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">
@@ -364,10 +395,10 @@ export default function HeatPumpWaterHeaterCalculator() {
                       <h3 className="text-lg font-semibold text-gray-900 mb-4">Conversion Factor</h3>
                       <FormField
                         control={form.control}
-                        name="conversionKwhToGj"
+                        name="conversionKbtuToGj"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Conversion Factor from kWh to GJ</FormLabel>
+                            <FormLabel>Conversion Factor from kBtu to GJ</FormLabel>
                             <FormControl>
                               <Input 
                                 type="number" 
@@ -416,11 +447,21 @@ export default function HeatPumpWaterHeaterCalculator() {
                 <div className="p-4 bg-green-50 rounded-lg">
                   <div className="flex items-center space-x-2 mb-2">
                     <TrendingUp className="text-green-600 w-5 h-5" />
-                    <span className="text-sm font-medium text-green-900">Annual Energy Savings</span>
+                    <span className="text-sm font-medium text-green-900">Annual Energy Savings - Gas</span>
                   </div>
                   <p className="text-2xl font-bold text-green-600">{results.annualEnergySavings.toFixed(6)} GJ</p>
                 </div>
               </div>
+              <div className="py-4">
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Zap className="text-blue-600 w-5 h-5" />
+                    <span className="text-sm font-medium text-blue-900">Annual Energy Savings - Electricity</span>
+                  </div>
+                  <p className="text-2xl font-bold text-blue-600">{results.annualEnergySavingsElectric.toFixed(6)} GJ</p>
+                </div>
+              </div>
+
             </CardContent>
           </Card>
           </div>
