@@ -114,11 +114,10 @@ export default function HeatPumpWaterHeaterElectricCalculator() {
     // kBTU_req = GPD × Density × SH × TempRise × 365 / 1000
     const kbtuReq = (inputs.gallonsPerDay * inputs.densityOfWater * inputs.specificHeatOfWater * waterTempRise * 365) / 1000;
     
-    // Annual Energy Savings = (kBTU_req / 3.413) × ((1 / EFbase) - (1 / EFee)) × ConversionFactorFromkWhToGJ
+    // Annual Energy Savings = (kBTU_req * conversionKbtuToGj) × ((1 / EFbase) - (1 / EFee))
+    // This is most updated formula based on excel data
     const annualEnergySavings = 
-      (kbtuReq / 3.413) * 
-      ((1 / inputs.energyFactorElectricWaterHeater) - (1 / inputs.energyFactorHeatPump)) * 
-      inputs.conversionKbtuToGj;
+    (kbtuReq * inputs.conversionKbtuToGj) * ((1 / inputs.energyFactorElectricWaterHeater) - (1 / inputs.energyFactorHeatPump))
 
     return {
       waterTempRise,
