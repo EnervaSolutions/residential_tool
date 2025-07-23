@@ -60,7 +60,7 @@ export default function HeatPumpWaterHeaterCalculator() {
       waterTempIntoTank: 46.04,
       waterTempExitFromTank: 140,
       energyFactorHeatPump: 2.0,
-      energyFactorGasWaterHeater: 0.8,
+      energyFactorGasWaterHeater: 0.58,
       conversionKbtuToGj: 0.001055056,
     },
   });
@@ -76,7 +76,7 @@ export default function HeatPumpWaterHeaterCalculator() {
         waterTempIntoTank: parseFloat(data.waterTempIntoTank) || 46.04,
         waterTempExitFromTank: parseFloat(data.waterTempExitFromTank) || 140,
         energyFactorHeatPump: parseFloat(data.energyFactorHeatPump) || 2.0,
-        energyFactorGasWaterHeater: parseFloat(data.energyFactorGasWaterHeater) || 0.8,
+        energyFactorGasWaterHeater: parseFloat(data.energyFactorGasWaterHeater) || 0.58,
         conversionKbtuToGj: parseFloat(data.conversionKbtuToGj) || 0.001055056,
       });
       setIsDataLoaded(true);
@@ -122,11 +122,10 @@ export default function HeatPumpWaterHeaterCalculator() {
     
     console.log("KBTUtoGJ rate:", inputs.conversionKbtuToGj);
     
-    // Annual Energy Savings = (kBTU_req / 3.413) × ((1 / EFbase) - (1 / EFee)) × ConversionFactorFromkWhToGJ
+    // Annual Energy Savings = (kbtuReq * inputs.conversionKbtuToGj)/inputs.energyFactorGasWaterHeater;
+    // This formula is most updated one based on excel sheet data
     const annualEnergySavings = 
-      (kbtuReq / 3.413) * 
-      ((1 / inputs.energyFactorGasWaterHeater) - (1 / inputs.energyFactorHeatPump)) * 
-      inputs.conversionKbtuToGj;
+      (kbtuReq * inputs.conversionKbtuToGj)/inputs.energyFactorGasWaterHeater;
 
     const annualEnergySavingsElectric = 
       (kbtuReq * inputs.conversionKbtuToGj) / inputs.energyFactorHeatPump;
