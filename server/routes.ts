@@ -3,10 +3,12 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertWindowCalculationSchema, insertDoorCalculationSchema, insertAirSealingCalculationSchema, insertAtticInsulationCalculationSchema, insertProjectSchema, insertAudioRecordingSchema } from "@shared/schema";
 import { z } from "zod";
-import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, HeadingLevel } from "docx";
+import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, HeadingLevel, AlignmentType, WidthType, BorderStyle, Media, VerticalAlign, ImageRun, ShadingType } from "docx";
+import fs from 'fs';
+import path from 'path';
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  
+
   // Get all window calculations
   app.get("/api/calculations", async (req, res) => {
     try {
@@ -63,7 +65,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const validatedData = insertWindowCalculationSchema.partial().parse(req.body);
       const calculation = await storage.updateWindowCalculation(id, validatedData);
-      
+
       if (!calculation) {
         return res.status(404).json({ message: "Calculation not found" });
       }
@@ -155,7 +157,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const validatedData = insertDoorCalculationSchema.partial().parse(req.body);
       const calculation = await storage.updateDoorCalculation(id, validatedData);
-      
+
       if (!calculation) {
         return res.status(404).json({ message: "Door calculation not found" });
       }
@@ -247,7 +249,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const validatedData = insertAirSealingCalculationSchema.partial().parse(req.body);
       const calculation = await storage.updateAirSealingCalculation(id, validatedData);
-      
+
       if (!calculation) {
         return res.status(404).json({ message: "Air sealing calculation not found" });
       }
@@ -339,7 +341,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const validatedData = insertAtticInsulationCalculationSchema.partial().parse(req.body);
       const calculation = await storage.updateAtticInsulationCalculation(id, validatedData);
-      
+
       if (!calculation) {
         return res.status(404).json({ message: "Attic insulation calculation not found" });
       }
@@ -431,7 +433,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const validatedData = insertProjectSchema.partial().parse(req.body);
       const project = await storage.updateProject(id, validatedData);
-      
+
       if (!project) {
         return res.status(404).json({ message: "Project not found" });
       }
@@ -462,7 +464,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Generate Word document
       const buffer = await generateProjectReport(project);
       const filename = `EERP_Report_${project.clientFileNumber}_${new Date().toISOString().split('T')[0]}.docx`;
-      
+
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
       res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
       res.send(buffer);
@@ -554,8 +556,8 @@ async function generateProjectReport(project: any): Promise<Buffer> {
     "Solar PV": "Solar panels must be permanently mounted. They can be on the house or ground as long as they are on the property of the house associated with your application. All equipment must be new, owned by the program participant and purchased in Canada. The PV system equipment needs to have warranty. Total system peak power capacity must be equal to or greater than 1.0 kW DC."
   };
 
-  const eligibleTechnologies: Array<{name: string, spec: string, savings?: string}> = [];
-  
+  const eligibleTechnologies: Array<{ name: string, spec: string, savings?: string }> = [];
+
   if (project.windowsData) {
     const gasSavings = project.windowsData.gasSavings || 0;
     const electricitySavings = project.windowsData.electricitySavings || 0;
@@ -569,7 +571,7 @@ async function generateProjectReport(project: any): Promise<Buffer> {
     const gasSavings = project.doorsData.gasSavings || 0;
     const electricitySavings = project.doorsData.electricitySavings || 0;
     eligibleTechnologies.push({
-      name: "ENERGY STAR® Replacement Door", 
+      name: "ENERGY STAR® Replacement Door",
       spec: technologiesMap["ENERGY STAR® Replacement Door"],
       savings: `Gas Savings: ${gasSavings.toFixed(6)} GJ/year, Electricity Savings: ${electricitySavings.toFixed(6)} GJ/year`
     });
@@ -670,35 +672,120 @@ async function generateProjectReport(project: any): Promise<Buffer> {
   }
 
   // Create technology table
-  const technologyRows = eligibleTechnologies.map(tech => 
+  const technologyRows = eligibleTechnologies.map(tech =>
     new TableRow({
       children: [
         new TableCell({
+          width: {
+            size: 50,
+            type: WidthType.PERCENTAGE,
+          },
+          margins: { top: 100, bottom: 100, left: 200, right: 200 },
           children: [new Paragraph({
-            children: [new TextRun({ text: tech.name, bold: true })]
+            children: [new TextRun({ text: tech.name })]
           })]
         }),
         new TableCell({
+          width: {
+            size: 50,
+            type: WidthType.PERCENTAGE,
+          },
+          margins: { top: 100, bottom: 100, left: 200, right: 200 },
           children: [new Paragraph({
             children: [new TextRun({ text: tech.spec })]
           })]
         }),
-        new TableCell({
-          children: [new Paragraph({
-            children: [new TextRun({ 
-              text: tech.savings || "No calculation data saved", 
-              italics: !tech.savings 
-            })]
-          })]
-        })
       ]
     })
   );
+
+  const logoPath = path.join(process.cwd(), 'attached_assets', 'EnervaLogo.png');
+  const logoBuffer = fs.readFileSync(logoPath);
+
 
   const doc = new Document({
     sections: [{
       children: [
         // Header
+        new Table({
+          width: {
+            size: 100,
+            type: WidthType.PERCENTAGE,
+          },
+          columnWidths: [2000, 4000, 3000], 
+          rows: [
+            new TableRow({
+              children: [
+                // Left cell - Logo
+                new TableCell({
+                  width: {
+                    size: 40,
+                    type: WidthType.PERCENTAGE,
+                  },
+                  children: [
+                    new Paragraph({
+                      children: [
+                        new ImageRun({
+                          data: logoBuffer,
+                          transformation: {
+                            width: 150,
+                            height: 36,
+                          },
+                          type: "jpg",
+                        }),
+                      ]
+                    })
+                  ],
+                }),
+                // Middle cell - Empty spacer
+                new TableCell({
+                  width: {
+                    size: 20,
+                    type: WidthType.PERCENTAGE,
+                  },
+                  children: [
+                    new Paragraph({ text: "" }) 
+                  ],
+                }),
+                // Right cell - Project Information  
+                new TableCell({
+                  width: {
+                    size: 40,
+                    type: WidthType.PERCENTAGE,
+                  },
+                  children: [
+                    new Paragraph({
+                      children: [new TextRun({ text: `Client File Number: ${project.clientFileNumber}`, bold: true })],
+                      alignment: AlignmentType.RIGHT
+                    }),
+                    new Paragraph({
+                      children: [new TextRun({ text: `Property Address: ${project.streetAddress}` })],
+                      alignment: AlignmentType.RIGHT
+                    }),
+                    new Paragraph({
+                      children: [new TextRun({ text: `House Type: ${project.houseType}` })],
+                      alignment: AlignmentType.RIGHT
+                    }),
+                    ...(project.userInfo ? [new Paragraph({
+                      children: [new TextRun({ text: `Contact: ${project.userInfo}` })],
+                      alignment: AlignmentType.RIGHT
+                    })] : []),
+                  ],
+                })
+              ]
+            })
+          ],
+          borders: {
+            top: { style: BorderStyle.NONE },
+            bottom: { style: BorderStyle.NONE },
+            left: { style: BorderStyle.NONE },
+            right: { style: BorderStyle.NONE },
+            insideHorizontal: { style: BorderStyle.NONE },
+            insideVertical: { style: BorderStyle.NONE },
+          }
+        }),
+
+        new Paragraph({ text: "" }),
         new Paragraph({
           children: [
             new TextRun({
@@ -707,9 +794,10 @@ async function generateProjectReport(project: any): Promise<Buffer> {
               size: 32
             })
           ],
-          heading: HeadingLevel.TITLE
+          heading: HeadingLevel.TITLE,
+          alignment: AlignmentType.CENTER
         }),
-        
+
         new Paragraph({
           children: [
             new TextRun({
@@ -718,7 +806,8 @@ async function generateProjectReport(project: any): Promise<Buffer> {
               size: 24
             })
           ],
-          heading: HeadingLevel.HEADING_1
+          heading: HeadingLevel.HEADING_1,
+          alignment: AlignmentType.CENTER
         }),
 
         new Paragraph({ text: "" }),
@@ -733,42 +822,6 @@ async function generateProjectReport(project: any): Promise<Buffer> {
         }),
 
         new Paragraph({ text: "" }),
-
-        // Project Information
-        new Paragraph({
-          children: [
-            new TextRun({
-              text: "Project Information:",
-              bold: true,
-              size: 22
-            })
-          ],
-          heading: HeadingLevel.HEADING_2
-        }),
-
-        new Paragraph({
-          children: [
-            new TextRun({ text: `Client File Number: ${project.clientFileNumber}` })
-          ]
-        }),
-
-        new Paragraph({
-          children: [
-            new TextRun({ text: `Property Address: ${project.streetAddress}` })
-          ]
-        }),
-
-        new Paragraph({
-          children: [
-            new TextRun({ text: `House Type: ${project.houseType}` })
-          ]
-        }),
-
-        ...(project.userInfo ? [new Paragraph({
-          children: [
-            new TextRun({ text: `Contact Information: ${project.userInfo}` })
-          ]
-        })] : []),
 
         new Paragraph({ text: "" }),
 
@@ -785,22 +838,32 @@ async function generateProjectReport(project: any): Promise<Buffer> {
 
         // Technology table
         new Table({
+          width: {
+            size: 100,
+            type: WidthType.PERCENTAGE,
+          },
+          columnWidths: [3000, 6000],
           rows: [
             new TableRow({
               children: [
                 new TableCell({
+                  width: {
+                    size: 50,
+                    type: WidthType.PERCENTAGE,
+                  },
+                  margins: { top: 100, bottom: 100, left: 200, right: 200 },
                   children: [new Paragraph({
                     children: [new TextRun({ text: "Technology Name", bold: true })]
                   })]
                 }),
                 new TableCell({
+                  width: {
+                    size: 50,
+                    type: WidthType.PERCENTAGE,
+                  },
+                  margins: { top: 100, bottom: 100, left: 200, right: 200 },
                   children: [new Paragraph({
                     children: [new TextRun({ text: "Technology Specification Required", bold: true })]
-                  })]
-                }),
-                new TableCell({
-                  children: [new Paragraph({
-                    children: [new TextRun({ text: "Calculated Energy Savings", bold: true })]
                   })]
                 })
               ]
@@ -808,6 +871,7 @@ async function generateProjectReport(project: any): Promise<Buffer> {
             ...technologyRows
           ]
         }),
+
 
         new Paragraph({ text: "" }),
 
@@ -840,9 +904,29 @@ async function generateProjectReport(project: any): Promise<Buffer> {
             })
           ]
         }),
+        
+        new Paragraph({ text: "" }),
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: "Enerva Energy Solutions Inc. | 407 9th Avenue SE, Calgary, AB, T2G 2K7"
+            })
+          ],
+          alignment: AlignmentType.CENTER
+        }),
+
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: "EERPsupport@enerva.ca  | https://enerva.ca"
+            })
+          ],
+          alignment: AlignmentType.CENTER
+        }),
+
 
         new Paragraph({ text: "" }),
-
+        
         new Paragraph({
           children: [
             new TextRun({
