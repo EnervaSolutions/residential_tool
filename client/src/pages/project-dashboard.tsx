@@ -244,14 +244,6 @@ export default function ProjectDashboard() {
                 <Home className="w-4 h-4 mr-2" />
                 Home
               </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => exportProject.mutate()}
-                disabled={exportProject.isPending}
-              >
-                <Download className="w-4 h-4 mr-2" />
-                {exportProject.isPending ? "Exporting..." : "Export Report"}
-              </Button>
             </div>
           </div>
         </div>
@@ -451,7 +443,7 @@ export default function ProjectDashboard() {
                   className="px-8"
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  {exportProject.isPending ? "Generating..." : "Generate Full Report"}
+                  {exportProject.isPending ? "Generating..." : "Generate Pre-Retrofit Report"}
                 </Button>
               </div>
             </div>
