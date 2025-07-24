@@ -1,13 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Mic, MicOff, Play, Pause, Download, Trash2, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useUniversalAudioRecorder } from "./universalRecorder"; // Import the hook
 import type { AudioRecording, InsertAudioRecording } from "@shared/schema";
 
 interface AudioRecorderProps {
@@ -15,21 +14,19 @@ interface AudioRecorderProps {
 }
 
 export function AudioRecorder({ projectId }: AudioRecorderProps) {
-  const [isRecording, setIsRecording] = useState(false);
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [recordingName, setRecordingName] = useState("");
   const [recordingDescription, setRecordingDescription] = useState("");
-  const [duration, setDuration] = useState(0);
 
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const chunksRef = useRef<Blob[]>([]);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Use the universal recorder hook
+  const recorder = useUniversalAudioRecorder({
+    maxDurationMs: 30 * 60 * 1000, // 30 minutes max
+    audioBitsPerSecond: 128000, // 128kbps for good quality/size balance
+  });
 
   // Fetch existing recordings
   const { data: recordings = [], isLoading } = useQuery<AudioRecording[]>({
@@ -86,55 +83,24 @@ export function AudioRecorder({ projectId }: AudioRecorderProps) {
 
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      chunksRef.current = [];
-
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          chunksRef.current.push(event.data);
-        }
-      };
-
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: "audio/wav" });
-        setAudioBlob(blob);
-        setAudioUrl(URL.createObjectURL(blob));
-        stream.getTracks().forEach(track => track.stop());
-      };
-
-      mediaRecorder.start();
-      setIsRecording(true);
-      setDuration(0);
-
-      // Start timer
-      timerRef.current = setInterval(() => {
-        setDuration(prev => prev + 1);
-      }, 1000);
-
+      await recorder.startRecording();
       toast({ title: "Recording started" });
     } catch (error) {
-      toast({ title: "Failed to start recording", description: "Please check microphone permissions", variant: "destructive" });
+      toast({ 
+        title: "Failed to start recording", 
+        description: "Please check microphone permissions", 
+        variant: "destructive" 
+      });
     }
   };
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-      
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-
-      toast({ title: "Recording stopped" });
-    }
+    recorder.stopRecording();
+    toast({ title: "Recording stopped" });
   };
 
   const playRecording = () => {
-    if (audioUrl && audioRef.current) {
+    if (recorder.audioUrl && audioRef.current) {
       audioRef.current.play();
       setIsPlaying(true);
     }
@@ -148,50 +114,77 @@ export function AudioRecorder({ projectId }: AudioRecorderProps) {
   };
 
   const resetRecording = () => {
-    setAudioBlob(null);
-    setAudioUrl(null);
+    recorder.resetRecording();
     setIsPlaying(false);
     setRecordingName("");
     setRecordingDescription("");
-    setDuration(0);
-    
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
   };
 
   const saveRecording = async () => {
-    if (!audioBlob || !recordingName.trim()) {
+    if (!recorder.audioBlob || !recordingName.trim()) {
       toast({ title: "Please provide a name for the recording", variant: "destructive" });
       return;
     }
 
-    // Convert blob to base64
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64Data = reader.result as string;
-      const audioData = base64Data.split(',')[1]; // Remove data:audio/wav;base64, prefix
+    if (recorder.audioBlob.size === 0) {
+      toast({ title: "Invalid audio recording", variant: "destructive" });
+      return;
+    }
+
+    if (recorder.audioBlob.size > 25 * 1024 * 1024) { // 25MB limit
+      toast({ title: "Audio file too large", variant: "destructive" });
+      return;
+    }
+
+    try {
+      // Convert blob to base64 with proper error handling
+      const base64Data = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = () => reject(new Error('Failed to read audio file'));
+        reader.readAsDataURL(recorder.audioBlob!);
+      });
+
+      const audioData = base64Data.split(',')[1];
 
       saveRecordingMutation.mutate({
         name: recordingName.trim(),
         description: recordingDescription.trim() || undefined,
         audioData,
-        duration,
-        mimeType: audioBlob.type || "audio/wav",
+        duration: recorder.duration,
+        mimeType: recorder.mimeType, // Use actual MIME type from recorder
       });
-    };
-    reader.readAsDataURL(audioBlob);
+    } catch (error) {
+      toast({ title: "Failed to process audio file", variant: "destructive" });
+    }
   };
 
   const downloadRecording = (recording: AudioRecording) => {
     const audioData = `data:${recording.mimeType};base64,${recording.audioData}`;
     const link = document.createElement('a');
     link.href = audioData;
-    link.download = `${recording.name}.wav`;
+    
+    // Use proper file extension based on MIME type
+    const extension = getFileExtension(recording.mimeType);
+    link.download = `${recording.name}.${extension}`;
+    
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const getFileExtension = (mimeType: string): string => {
+    const extensions: Record<string, string> = {
+      'audio/webm': 'webm',
+      'audio/mp4': 'm4a',
+      'audio/ogg': 'ogg',
+      'audio/wav': 'wav',
+    };
+    
+    for (const [type, ext] of Object.entries(extensions)) {
+      if (mimeType.includes(type)) return ext;
+    }
+    return 'wav'; // fallback
   };
 
   const formatDuration = (seconds: number) => {
@@ -208,13 +201,14 @@ export function AudioRecorder({ projectId }: AudioRecorderProps) {
     if (audioRef.current) {
       audioRef.current.onended = () => setIsPlaying(false);
     }
+  }, [recorder.audioUrl]);
 
-    return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-    };
-  }, [audioUrl]);
+  // Show recorder error if any
+  useEffect(() => {
+    if (recorder.error) {
+      toast({ title: "Recording Error", description: recorder.error, variant: "destructive" });
+    }
+  }, [recorder.error, toast]);
 
   return (
     <div className="space-y-6">
@@ -224,23 +218,40 @@ export function AudioRecorder({ projectId }: AudioRecorderProps) {
           <CardTitle className="flex items-center gap-2">
             <Mic className="h-5 w-5" />
             Audio Recorder
+            <span className="text-sm text-muted-foreground ml-2">
+              (Format: {recorder.mimeType || 'Not selected'})
+            </span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-4">
-            {!isRecording ? (
+            {!recorder.isRecording ? (
               <Button onClick={startRecording} className="flex items-center gap-2">
                 <Mic className="h-4 w-4" />
                 Start Recording
               </Button>
             ) : (
-              <Button onClick={stopRecording} variant="destructive" className="flex items-center gap-2">
-                <MicOff className="h-4 w-4" />
-                Stop Recording ({formatDuration(duration)})
-              </Button>
+              <>
+                <Button onClick={stopRecording} variant="destructive" className="flex items-center gap-2">
+                  <MicOff className="h-4 w-4" />
+                  Stop Recording ({formatDuration(recorder.duration)})
+                </Button>
+                
+                {!recorder.isPaused ? (
+                  <Button onClick={recorder.pauseRecording} variant="outline" className="flex items-center gap-2">
+                    <Pause className="h-4 w-4" />
+                    Pause
+                  </Button>
+                ) : (
+                  <Button onClick={recorder.resumeRecording} variant="outline" className="flex items-center gap-2">
+                    <Play className="h-4 w-4" />
+                    Resume
+                  </Button>
+                )}
+              </>
             )}
 
-            {audioUrl && (
+            {recorder.audioUrl && (
               <>
                 {!isPlaying ? (
                   <Button onClick={playRecording} variant="outline" className="flex items-center gap-2">
@@ -262,7 +273,7 @@ export function AudioRecorder({ projectId }: AudioRecorderProps) {
           </div>
 
           {/* Save Recording Form */}
-          {audioBlob && (
+          {recorder.audioBlob && (
             <div className="border-t pt-4 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -296,8 +307,8 @@ export function AudioRecorder({ projectId }: AudioRecorderProps) {
           )}
 
           {/* Hidden audio element for playback */}
-          {audioUrl && (
-            <audio ref={audioRef} src={audioUrl} style={{ display: 'none' }} />
+          {recorder.audioUrl && (
+            <audio ref={audioRef} src={recorder.audioUrl} style={{ display: 'none' }} />
           )}
         </CardContent>
       </Card>
@@ -324,7 +335,7 @@ export function AudioRecorder({ projectId }: AudioRecorderProps) {
                       )}
                       <div className="text-xs text-muted-foreground mt-2 space-y-1">
                         <p>Duration: {formatDuration(recording.duration || 0)}</p>
-                        <p>Saved: {formatDateTime(recording.createdAt)}</p>
+                        <p>Saved: {formatDateTime(recording.createdAt.toString())}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 ml-4">
