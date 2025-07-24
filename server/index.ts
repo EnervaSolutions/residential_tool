@@ -36,6 +36,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// Increased payload limits to accomodate safari recording uploads.
+// should revert back to 1mb by implementing better solution, this is a qucik fix
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
 (async () => {
   const server = await registerRoutes(app);
 
