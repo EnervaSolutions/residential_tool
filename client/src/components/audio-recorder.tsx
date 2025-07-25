@@ -8,7 +8,7 @@ import { Mic, MicOff, Play, Pause, Download, Trash2, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUniversalAudioRecorder } from "./universalRecorder"; // Import the hook
 import type { AudioRecording, InsertAudioRecording } from "@shared/schema";
-import BrowserOptimizationBanner from "./browser-banner";
+
 interface AudioRecorderProps {
   projectId: number;
 }
@@ -268,7 +268,6 @@ export function AudioRecorder({ projectId }: AudioRecorderProps) {
   return (
     <div className="space-y-6">
       {/* Recording Controls */}
-      <BrowserOptimizationBanner />
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
