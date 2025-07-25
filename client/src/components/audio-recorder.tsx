@@ -8,7 +8,7 @@ import { Mic, MicOff, Play, Pause, Download, Trash2, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUniversalAudioRecorder } from "./universalRecorder"; // Import the hook
 import type { AudioRecording, InsertAudioRecording } from "@shared/schema";
-
+import BrowserOptimizationBanner from "./browser-banner";
 interface AudioRecorderProps {
   projectId: number;
 }
@@ -22,10 +22,10 @@ export function AudioRecorder({ projectId }: AudioRecorderProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Use the universal recorder hook
+  // Voice-optimized recording (default)
   const recorder = useUniversalAudioRecorder({
-    maxDurationMs: 30 * 60 * 1000, // 30 minutes max
-    audioBitsPerSecond: 128000, // 128kbps for good quality/size balance
+  voiceOptimized: true,  // 32 kbps, 16 kHz, mono
+  maxDurationMs: 2 * 60 * 60 * 1000, // 2 hours max
   });
 
   // Fetch existing recordings
@@ -41,12 +41,34 @@ export function AudioRecorder({ projectId }: AudioRecorderProps) {
   });
 
   // Save recording mutation
+  // const saveRecordingMutation = useMutation({
+  //   mutationFn: async (data: Omit<InsertAudioRecording, "projectId">) => {
+  //     const response = await fetch(`/api/projects/${projectId}/audio`, {
+  //       method: "POST",
+  //       body: JSON.stringify(data),
+  //       headers: { "Content-Type": "application/json" },
+  //     });
+  //     if (!response.ok) {
+  //       throw new Error('Failed to save recording');
+  //     }
+  //     return response.json();
+  //   },
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ["/api/projects", projectId, "audio"] });
+  //     toast({ title: "Recording saved successfully" });
+  //     resetRecording();
+  //   },
+  //   onError: () => {
+  //     toast({ title: "Failed to save recording", variant: "destructive" });
+  //   },
+  // });
+
   const saveRecordingMutation = useMutation({
-    mutationFn: async (data: Omit<InsertAudioRecording, "projectId">) => {
+    mutationFn: async (formData: FormData) => {
       const response = await fetch(`/api/projects/${projectId}/audio`, {
         method: "POST",
-        body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" },
+        body: formData, // Send FormData directly
+        // Remove Content-Type header - browser sets it automatically with boundary
       });
       if (!response.ok) {
         throw new Error('Failed to save recording');
@@ -86,10 +108,10 @@ export function AudioRecorder({ projectId }: AudioRecorderProps) {
       await recorder.startRecording();
       toast({ title: "Recording started" });
     } catch (error) {
-      toast({ 
-        title: "Failed to start recording", 
-        description: "Please check microphone permissions", 
-        variant: "destructive" 
+      toast({
+        title: "Failed to start recording",
+        description: "Please check microphone permissions",
+        variant: "destructive"
       });
     }
   };
@@ -120,54 +142,88 @@ export function AudioRecorder({ projectId }: AudioRecorderProps) {
     setRecordingDescription("");
   };
 
+  // const saveRecording = async () => {
+  //   if (!recorder.audioBlob || !recordingName.trim()) {
+  //     toast({ title: "Please provide a name for the recording", variant: "destructive" });
+  //     return;
+  //   }
+
+  //   if (recorder.audioBlob.size === 0) {
+  //     toast({ title: "Invalid audio recording", variant: "destructive" });
+  //     return;
+  //   }
+
+  //   if (recorder.audioBlob.size > 25 * 1024 * 1024) { // 25MB limit
+  //     toast({ title: "Audio file too large", variant: "destructive" });
+  //     return;
+  //   }
+
+  //   try {
+  //     // Convert blob to base64 with proper error handling
+  //     const base64Data = await new Promise<string>((resolve, reject) => {
+  //       const reader = new FileReader();
+  //       reader.onloadend = () => resolve(reader.result as string);
+  //       reader.onerror = () => reject(new Error('Failed to read audio file'));
+  //       reader.readAsDataURL(recorder.audioBlob!);
+  //     });
+
+  //     const audioData = base64Data.split(',')[1];
+
+  //     saveRecordingMutation.mutate({
+  //       name: recordingName.trim(),
+  //       description: recordingDescription.trim() || undefined,
+  //       audioData,
+  //       duration: recorder.duration,
+  //       mimeType: recorder.mimeType, // Use actual MIME type from recorder
+  //     });
+  //   } catch (error) {
+  //     toast({ title: "Failed to process audio file", variant: "destructive" });
+  //   }
+  // };
+
   const saveRecording = async () => {
     if (!recorder.audioBlob || !recordingName.trim()) {
       toast({ title: "Please provide a name for the recording", variant: "destructive" });
       return;
     }
-
+  
     if (recorder.audioBlob.size === 0) {
       toast({ title: "Invalid audio recording", variant: "destructive" });
       return;
     }
-
-    if (recorder.audioBlob.size > 25 * 1024 * 1024) { // 25MB limit
+  
+    if (recorder.audioBlob.size > 50 * 1024 * 1024) { // 50MB limit
       toast({ title: "Audio file too large", variant: "destructive" });
       return;
     }
-
+  
     try {
-      // Convert blob to base64 with proper error handling
-      const base64Data = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.onerror = () => reject(new Error('Failed to read audio file'));
-        reader.readAsDataURL(recorder.audioBlob!);
-      });
-
-      const audioData = base64Data.split(',')[1];
-
-      saveRecordingMutation.mutate({
-        name: recordingName.trim(),
-        description: recordingDescription.trim() || undefined,
-        audioData,
-        duration: recorder.duration,
-        mimeType: recorder.mimeType, // Use actual MIME type from recorder
-      });
+      const formData = new FormData();
+      // Determine file extension based on MIME type
+      const fileExtension = recorder.mimeType.includes('webm') ? '.webm' : 
+        recorder.mimeType.includes('mp4') ? '.mp4' : '.webm';
+      formData.append('audio', recorder.audioBlob, `${recordingName.trim()}${fileExtension}`);
+      formData.append('name', recordingName.trim());
+      formData.append('duration', recorder.duration.toString());
+      formData.append('mimeType', recorder.mimeType);
+      
+      if (recordingDescription.trim()) {
+        formData.append('description', recordingDescription.trim());
+      }
+  
+      // Update your mutation to handle FormData instead of JSON
+      saveRecordingMutation.mutate(formData);
     } catch (error) {
       toast({ title: "Failed to process audio file", variant: "destructive" });
     }
   };
-
   const downloadRecording = (recording: AudioRecording) => {
     const audioData = `data:${recording.mimeType};base64,${recording.audioData}`;
     const link = document.createElement('a');
     link.href = audioData;
-    
     // Use proper file extension based on MIME type
     const extension = getFileExtension(recording.mimeType);
     link.download = `${recording.name}.${extension}`;
-    
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -180,7 +236,6 @@ export function AudioRecorder({ projectId }: AudioRecorderProps) {
       'audio/ogg': 'ogg',
       'audio/wav': 'wav',
     };
-    
     for (const [type, ext] of Object.entries(extensions)) {
       if (mimeType.includes(type)) return ext;
     }
@@ -213,6 +268,7 @@ export function AudioRecorder({ projectId }: AudioRecorderProps) {
   return (
     <div className="space-y-6">
       {/* Recording Controls */}
+      <BrowserOptimizationBanner />
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -236,7 +292,6 @@ export function AudioRecorder({ projectId }: AudioRecorderProps) {
                   <MicOff className="h-4 w-4" />
                   Stop Recording ({formatDuration(recorder.duration)})
                 </Button>
-                
                 {!recorder.isPaused ? (
                   <Button onClick={recorder.pauseRecording} variant="outline" className="flex items-center gap-2">
                     <Pause className="h-4 w-4" />
