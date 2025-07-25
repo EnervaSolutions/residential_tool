@@ -1,12 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import multer from 'multer';
-
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 50 * 1024 * 1024 } // 50MB limit
-});
 
 const app = express();
 app.use(express.json());
@@ -43,20 +37,8 @@ app.use((req, res, next) => {
 });
 
 // Default smaller limits
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ limit: '10mb', extended: true }));
-
-// Audio-specific route with higher limits
-app.post("/api/projects/:projectId/audio",
-  express.raw({
-    type: 'multipart/form-data',
-    limit: '35mb'
-  }),
-  upload.single('audio'),
-  async (req, res) => {
-    // Your audio handler
-  }
-);
+app.use(express.json({ limit: '30mb' }));
+app.use(express.urlencoded({ limit: '30mb', extended: true }));
 
 (async () => {
   const server = await registerRoutes(app);
