@@ -4,7 +4,10 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Calculator, Home, Wind, Zap, Droplets, Thermometer, Snowflake, Sun } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Calculator, Home, Wind, Zap, Droplets, Thermometer, Snowflake, Sun, AlertTriangle, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { isSafari } from "@/lib/utils";
 import NotFound from "@/pages/not-found";
 import WelcomePage from "@/pages/welcome";
 import ProjectDashboard from "@/pages/project-dashboard";
@@ -22,9 +25,27 @@ import GroundSourceHeatPumpPage from "@/pages/ground-source-heat-pump";
 import DmshpPage from "@/pages/dmshp";
 import SolarPvPage from "@/pages/solar-pv";
 import AudioRecordingPage from "@/pages/audio-recording";
+import { FloatingRecorder } from "./components/floating-recorder";
 
 function Sidebar() {
   const [location] = useLocation();
+  const [showSafariBanner, setShowSafariBanner] = useState(false);
+
+  useEffect(() => {
+    // Check if Safari banner should be shown
+    const isDismissed = localStorage.getItem('safari-banner-dismissed');
+    if (isSafari() && !isDismissed) {
+      setShowSafariBanner(true);
+    }
+
+    // Listen for banner dismissal
+    const handleBannerDismissed = () => {
+      setShowSafariBanner(false);
+    };
+
+    window.addEventListener('safari-banner-dismissed', handleBannerDismissed);
+    return () => window.removeEventListener('safari-banner-dismissed', handleBannerDismissed);
+  }, []);
   
   // Only show sidebar on calculator pages
   if (location === "/" || location === "/project-dashboard" || location === "/audio-recording") {
@@ -32,7 +53,7 @@ function Sidebar() {
   }
   
   return (
-    <div className="w-64 bg-white border-r border-gray-200 h-screen fixed left-0 top-0 overflow-y-auto">
+    <div className={`w-64 bg-white border-r border-gray-200 fixed left-0 overflow-y-auto ${showSafariBanner ? "top-16 h-[calc(100vh-4rem)]" : "top-0 h-screen"}`}>
       <div className="p-6">
         <div className="flex items-center mb-8">
           <Calculator className="text-primary text-2xl mr-3" />
@@ -176,11 +197,28 @@ function Sidebar() {
 function Router() {
   const [location] = useLocation();
   const showSidebar = location !== "/" && location !== "/project-dashboard" && location !== "/audio-recording";
+  const [showSafariBanner, setShowSafariBanner] = useState(false);
+
+  useEffect(() => {
+    // Check if Safari banner should be shown (same logic as SafariBanner component)
+    const isDismissed = localStorage.getItem('safari-banner-dismissed');
+    if (isSafari() && !isDismissed) {
+      setShowSafariBanner(true);
+    }
+
+    // Listen for banner dismissal to update padding
+    const handleBannerDismissed = () => {
+      setShowSafariBanner(false);
+    };
+
+    window.addEventListener('safari-banner-dismissed', handleBannerDismissed);
+    return () => window.removeEventListener('safari-banner-dismissed', handleBannerDismissed);
+  }, []);
   
   return (
     <div className="flex">
       <Sidebar />
-      <div className={`flex-1 ${showSidebar ? "ml-64" : ""}`}>
+      <div className={`flex-1 ${showSidebar ? "ml-64" : ""} ${showSafariBanner ? "pt-16" : ""}`}>
         <Switch>
           <Route path="/" component={WelcomePage} />
           <Route path="/project-dashboard" component={ProjectDashboard} />
@@ -205,12 +243,57 @@ function Router() {
   );
 }
 
+function SafariBanner() {
+  const [showBanner, setShowBanner] = useState(false);
+
+  useEffect(() => {
+    // Check if user is on Safari and hasn't dismissed the banner
+    const isDismissed = localStorage.getItem('safari-banner-dismissed');
+    if (isSafari() && !isDismissed) {
+      setShowBanner(true);
+    }
+  }, []);
+
+  const dismissBanner = () => {
+    setShowBanner(false);
+    localStorage.setItem('safari-banner-dismissed', 'true');
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new CustomEvent('safari-banner-dismissed'));
+  };
+
+  if (!showBanner) return null;
+
+  return (
+    <div className="fixed top-0 left-0 right-0 z-50">
+      <Alert className="rounded-none border-x-0 border-t-0 bg-orange-50 border-orange-200">
+        <AlertTriangle className="h-4 w-4 text-orange-600" />
+        <AlertDescription className="flex items-center justify-between">
+          <span className="text-orange-800">
+            For the best experience with audio recording and other features, we recommend using <strong>Google Chrome</strong> browser.
+          </span>
+          <Button
+            onClick={dismissBanner}
+            variant="ghost"
+            size="sm"
+            className="h-6 w-6 p-0 text-orange-600 hover:text-orange-800 hover:bg-orange-100"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </AlertDescription>
+      </Alert>
+    </div>
+  );
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
+        <SafariBanner />
         <Toaster />
+        <FloatingRecorder position="top-left">
         <Router />
+        </FloatingRecorder>
       </TooltipProvider>
     </QueryClientProvider>
   );
