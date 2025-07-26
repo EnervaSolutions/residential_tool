@@ -16,6 +16,8 @@ import { useToast } from "@/hooks/use-toast";
 import { FolderOpen, Plus, Calculator, FileText } from "lucide-react";
 import { useLocation } from "wouter";
 import { Project, InsertProject } from "@shared/schema";
+import { useProjectSwitch } from "@/hooks/useProjectSwitch";
+import { RecordingSavePrompt } from "@/components/recording-save-prompt";
 
 const clientInfoSchema = z.object({
   clientFileNumber: z.string().min(1, "Client file number is required"),
@@ -31,6 +33,15 @@ export default function WelcomePage() {
   const [showNewProjectDialog, setShowNewProjectDialog] = useState(false);
   const [showProjectListDialog, setShowProjectListDialog] = useState(false);
   const { toast } = useToast();
+
+  const projectSwitch = useProjectSwitch({
+    onSwitch: () => setLocation("/project-dashboard"),
+    onBlocked: (reason) => toast({
+      title: "Cannot Switch Projects",
+      description: reason,
+      variant: "destructive",
+    })
+  });
 
   const form = useForm<ClientInfo>({
     resolver: zodResolver(clientInfoSchema),
@@ -55,13 +66,12 @@ export default function WelcomePage() {
       return await response.json();
     },
     onSuccess: (project: Project) => {
-      localStorage.setItem("currentProjectId", project.id.toString());
+      projectSwitch.switchProject(project.id, true); // Force switch for new projects
       toast({
         title: "Project Created",
         description: "Your new project has been created successfully.",
       });
       setShowNewProjectDialog(false);
-      setLocation("/project-dashboard");
     },
     onError: (error: Error) => {
       console.error("Project creation error:", error);
@@ -78,8 +88,7 @@ export default function WelcomePage() {
   };
 
   const handleContinueProject = (project: Project) => {
-    localStorage.setItem("currentProjectId", project.id.toString());
-    setLocation("/project-dashboard");
+    projectSwitch.switchProject(project.id);
   };
 
   return (
@@ -287,6 +296,17 @@ export default function WelcomePage() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Recording Save Prompt */}
+      <RecordingSavePrompt
+        isOpen={projectSwitch.isPrompting}
+        onSave={projectSwitch.saveAndSwitch}
+        onDiscard={projectSwitch.discardAndSwitch}
+        onCancel={projectSwitch.cancelSwitch}
+        isSaving={projectSwitch.isSaving}
+        duration={projectSwitch.currentDuration}
+        projectId={projectSwitch.pendingProjectId}
+      />
     </div>
   );
 }

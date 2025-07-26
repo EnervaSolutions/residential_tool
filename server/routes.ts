@@ -497,56 +497,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create a new audio recording with enhanced error handling
-  // app.post("/api/projects/:projectId/audio", async (req, res) => {
-  //   try {
-  //     const projectId = parseInt(req.params.projectId);
-  //     if (isNaN(projectId)) {
-  //       return res.status(400).json({ message: "Invalid project ID" });
-  //     }
-
-  //     // Validate the audio data before processing
-  //     if (req.body.audioData) {
-  //       const audioDataSize = Buffer.from(req.body.audioData, 'base64').length;
-  //       if (audioDataSize > 50 * 1024 * 1024) { // 50MB limit for decoded audio
-  //         return res.status(413).json({ message: "Audio file too large (max 50MB)" });
-  //       }
-        
-  //       // Validate base64 format
-  //       if (!/^[A-Za-z0-9+/]*={0,2}$/.test(req.body.audioData)) {
-  //         return res.status(400).json({ message: "Invalid audio data format" });
-  //       }
-  //     }
-
-  //     const validatedData = insertAudioRecordingSchema.parse({
-  //       ...req.body,
-  //       projectId
-  //     });
-      
-  //     const recording = await storage.createAudioRecording(validatedData);
-  //     res.status(201).json(recording);
-  //   } catch (error) {
-  //     if (error instanceof z.ZodError) {
-  //       return res.status(400).json({ 
-  //         message: "Invalid input data", 
-  //         errors: error.errors.map(e => ({ path: e.path.join('.'), message: e.message }))
-  //       });
-  //     }
-      
-  //     if (error instanceof Error) {
-  //       if (error.message.includes('too large')) {
-  //         return res.status(413).json({ message: "Audio file too large" });
-  //       }
-  //       if (error.message.includes('timeout')) {
-  //         return res.status(408).json({ message: "Request timeout - please try again" });
-  //       }
-  //     }
-      
-  //     console.error("Error creating audio recording:", error);
-  //     res.status(500).json({ message: "Failed to create audio recording" });
-  //   }
-  // });
-
+  // Create an audio recording 
   app.post("/api/projects/:projectId/audio", upload.single('audio'), async (req, res) => {
     try {
       const projectId = parseInt(req.params.projectId);

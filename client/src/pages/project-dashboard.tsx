@@ -9,11 +9,22 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Calculator, Home, Wind, Zap, Droplets, FileText, Save, Download, Thermometer, Snowflake, Sun, Mic } from "lucide-react";
 import { Project } from "@shared/schema";
+import { useProjectSwitch } from "@/hooks/useProjectSwitch";
+import { RecordingSavePrompt } from "@/components/recording-save-prompt";
 
 export default function ProjectDashboard() {
   const [, setLocation] = useLocation();
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
   const { toast } = useToast();
+
+  const projectSwitch = useProjectSwitch({
+    onSwitch: () => setLocation("/"),
+    onBlocked: (reason) => toast({
+      title: "Cannot Leave Project",
+      description: reason,
+      variant: "destructive",
+    })
+  });
 
   useEffect(() => {
     const projectId = localStorage.getItem("currentProjectId");
@@ -240,7 +251,7 @@ export default function ProjectDashboard() {
               </div>
             </div>
             <div className="flex space-x-3">
-              <Button variant="outline" onClick={() => setLocation("/")}>
+              <Button variant="outline" onClick={() => projectSwitch.switchProject(0)}>
                 <Home className="w-4 h-4 mr-2" />
                 Home
               </Button>
@@ -450,6 +461,17 @@ export default function ProjectDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Recording Save Prompt */}
+      <RecordingSavePrompt
+        isOpen={projectSwitch.isPrompting}
+        onSave={projectSwitch.saveAndSwitch}
+        onDiscard={projectSwitch.discardAndSwitch}
+        onCancel={projectSwitch.cancelSwitch}
+        isSaving={projectSwitch.isSaving}
+        duration={projectSwitch.currentDuration}
+        projectId={parseInt(currentProjectId || '1')}
+      />
     </div>
   );
 }

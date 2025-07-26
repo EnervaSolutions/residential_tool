@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AudioRecorder } from "@/components/audio-recorder";
-import { Home, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 export default function AudioRecording() {
   const [, setLocation] = useLocation();
@@ -43,10 +43,6 @@ export default function AudioRecording() {
                 <Button variant="outline" onClick={() => setLocation("/project-dashboard")}>
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Back to Dashboard
-                </Button>
-                <Button variant="outline" onClick={() => setLocation("/")}>
-                  <Home className="w-4 h-4 mr-2" />
-                  Home
                 </Button>
               </div>
             </div>
