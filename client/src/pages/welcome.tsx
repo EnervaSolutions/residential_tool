@@ -13,7 +13,7 @@ import { z } from "zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { FolderOpen, Plus, Calculator, FileText } from "lucide-react";
+import { FolderOpen, Plus, Calculator, FileText, Info } from "lucide-react";
 import { useLocation } from "wouter";
 import { Project, InsertProject } from "@shared/schema";
 import { useProjectSwitch } from "@/hooks/useProjectSwitch";
@@ -116,20 +116,20 @@ export default function WelcomePage() {
         </div>
 
         {/* Main Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Start New Project */}
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setShowNewProjectDialog(true)}>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer flex flex-col h-full" onClick={() => setShowNewProjectDialog(true)}>
             <CardHeader className="text-center">
               <div className="mx-auto bg-green-100 p-4 rounded-full w-16 h-16 flex items-center justify-center mb-4">
                 <Plus className="text-green-600 text-2xl" />
               </div>
               <CardTitle className="text-xl">Start New Project</CardTitle>
             </CardHeader>
-            <CardContent className="text-center">
-              <p className="text-gray-600 mb-4">
+            <CardContent className="text-center flex-1 flex flex-col">
+              <p className="text-gray-600 mb-4 flex-1">
                 Begin a new energy efficiency calculation project by entering client information
               </p>
-              <Button className="w-full">
+              <Button className="w-full mt-auto">
                 <Plus className="w-4 h-4 mr-2" />
                 New Project
               </Button>
@@ -137,20 +137,39 @@ export default function WelcomePage() {
           </Card>
 
           {/* Continue Saved Project */}
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setShowProjectListDialog(true)}>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer flex flex-col h-full" onClick={() => setShowProjectListDialog(true)}>
             <CardHeader className="text-center">
               <div className="mx-auto bg-blue-100 p-4 rounded-full w-16 h-16 flex items-center justify-center mb-4">
                 <FolderOpen className="text-blue-600 text-2xl" />
               </div>
               <CardTitle className="text-xl">Continue Saved Project</CardTitle>
             </CardHeader>
-            <CardContent className="text-center">
-              <p className="text-gray-600 mb-4">
+            <CardContent className="text-center flex-1 flex flex-col">
+              <p className="text-gray-600 mb-4 flex-1">
                 Load and continue working on a previously saved project
               </p>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full mt-auto">
                 <FolderOpen className="w-4 h-4 mr-2" />
                 Load Project
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Instructions & Help */}
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer flex flex-col h-full" onClick={() => setLocation("/instructions")}>
+            <CardHeader className="text-center">
+              <div className="mx-auto bg-indigo-100 p-4 rounded-full w-16 h-16 flex items-center justify-center mb-4">
+                <Info className="text-indigo-600 text-2xl" />
+              </div>
+              <CardTitle className="text-xl">User Guide & Instructions</CardTitle>
+            </CardHeader>
+            <CardContent className="text-center flex-1 flex flex-col">
+              <p className="text-gray-600 mb-4 flex-1">
+                View comprehensive instructions and calculator documentation
+              </p>
+              <Button variant="outline" className="w-full mt-auto">
+                <Info className="w-4 h-4 mr-2" />
+                View Instructions
               </Button>
             </CardContent>
           </Card>

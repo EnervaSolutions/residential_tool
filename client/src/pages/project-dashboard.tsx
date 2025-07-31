@@ -12,6 +12,101 @@ import { Project } from "@shared/schema";
 import { useProjectSwitch } from "@/hooks/useProjectSwitch";
 import { RecordingSavePrompt } from "@/components/recording-save-prompt";
 
+// Helper function to get technology results data
+const getTechnologyResults = (techName: string, project: any) => {
+  switch (techName) {
+    case "Window Replacement":
+      return project.windowsData ? {
+        primary: `${(project.windowsData.gasSavings || 0).toFixed(2)} GJ/year`,
+        detailed: [
+          `Gas Savings: ${(project.windowsData.gasSavings || 0).toFixed(6)} GJ/year`,
+          `Electricity Savings: ${(project.windowsData.electricitySavings || 0).toFixed(6)} GJ/year`
+        ]
+      } : null;
+    case "Door Replacement":
+      return project.doorsData ? {
+        primary: `${(project.doorsData.gasSavings || 0).toFixed(2)} GJ/year`,
+        detailed: [
+          `Gas Savings: ${(project.doorsData.gasSavings || 0).toFixed(6)} GJ/year`,
+          `Electricity Savings: ${(project.doorsData.electricitySavings || 0).toFixed(6)} GJ/year`
+        ]
+      } : null;
+    case "Air Sealing":
+      return project.airSealingData ? {
+        primary: `${(project.airSealingData.gasSavings || 0).toFixed(2)} GJ/year`,
+        detailed: [`Gas Savings: ${(project.airSealingData.gasSavings || 0).toFixed(6)} GJ/year`]
+      } : null;
+    case "Attic Insulation":
+      return project.atticInsulationData ? {
+        primary: `${(project.atticInsulationData.gasSavings || 0).toFixed(2)} GJ/year`,
+        detailed: [
+          `Gas Savings: ${(project.atticInsulationData.gasSavings || 0).toFixed(6)} GJ/year`,
+          `Electricity Savings: ${(project.atticInsulationData.electricitySavings || 0).toFixed(6)} GJ/year`
+        ]
+      } : null;
+    case "DWHR - Gas":
+      return project.dwhreData ? {
+        primary: `${(project.dwhreData.annualFuelSaved || 0).toFixed(2)} GJ/year`,
+        detailed: [
+          `Annual Energy Recovered: ${(project.dwhreData.annualEnergyRecovered || 0).toFixed(6)} GJ/year`,
+          `Annual Fuel Saved: ${(project.dwhreData.annualFuelSaved || 0).toFixed(6)} GJ/year`
+        ]
+      } : null;
+    case "DWHR - Electric":
+      return project.dwhreElectricData ? {
+        primary: `${(project.dwhreElectricData.annualFuelSaved || 0).toFixed(2)} GJ/year`,
+        detailed: [
+          `Annual Energy Recovered: ${(project.dwhreElectricData.annualEnergyRecovered || 0).toFixed(6)} GJ/year`,
+          `Annual Fuel Saved: ${(project.dwhreElectricData.annualFuelSaved || 0).toFixed(6)} GJ/year`
+        ]
+      } : null;
+    case "Heat Pump Water Heater - Gas":
+      return project.heatPumpWaterHeaterData ? {
+        primary: `${(project.heatPumpWaterHeaterData.annualEnergySavings || 0).toFixed(2)} GJ/year`,
+        detailed: [`Annual Energy Savings: ${(project.heatPumpWaterHeaterData.annualEnergySavings || 0).toFixed(6)} GJ/year`]
+      } : null;
+    case "Heat Pump Water Heater - Electric":
+      return project.heatPumpWaterHeaterElectricData ? {
+        primary: `${(project.heatPumpWaterHeaterElectricData.annualEnergySavings || 0).toFixed(2)} GJ/year`,
+        detailed: [`Annual Energy Savings: ${(project.heatPumpWaterHeaterElectricData.annualEnergySavings || 0).toFixed(6)} GJ/year`]
+      } : null;
+    case "Heat Recovery Ventilator":
+      return project.heatRecoveryVentilatorData ? {
+        primary: `${(project.heatRecoveryVentilatorData.annualEnergySavingsGas || 0).toFixed(2)} GJ/year`,
+        detailed: [`Annual Energy Savings - Gas: ${(project.heatRecoveryVentilatorData.annualEnergySavingsGas || 0).toFixed(6)} GJ/year`]
+      } : null;
+    case "Smart Thermostat":
+      return project.smartThermostatData ? {
+        primary: `${(project.smartThermostatData.annualEnergySavingsGas || 0).toFixed(2)} GJ/year`,
+        detailed: [`Annual Energy Savings - Gas: ${(project.smartThermostatData.annualEnergySavingsGas || 0).toFixed(6)} GJ/year`]
+      } : null;
+    case "Ground Source Heat Pump":
+      return project.groundSourceHeatPumpData ? {
+        primary: `${(project.groundSourceHeatPumpData.annualEnergySavingsGas || 0).toFixed(2)} GJ/year`,
+        detailed: [
+          `Annual Energy Savings - Gas: ${(project.groundSourceHeatPumpData.annualEnergySavingsGas || 0).toFixed(6)} GJ/year`,
+          `Annual Energy Savings - Electricity: ${(project.groundSourceHeatPumpData.annualEnergySavingsElectricity || 0).toFixed(6)} GJ/year`
+        ]
+      } : null;
+    case "DMSHP":
+      return project.dmshpData ? {
+        primary: `${(project.dmshpData.annualEnergySavingsGas || 0).toFixed(2)} GJ/year`,
+        detailed: [
+          `Annual Energy Savings - Gas: ${(project.dmshpData.annualEnergySavingsGas || 0).toFixed(6)} GJ/year`,
+          `Annual Energy Savings - Heating Electricity: ${(project.dmshpData.annualEnergySavingsHeatingElectricity || 0).toFixed(6)} GJ/year`,
+          `Annual Energy Savings - Cooling Electricity: ${(project.dmshpData.annualEnergySavingsCoolingElectricity || 0).toFixed(6)} GJ/year`
+        ]
+      } : null;
+    case "Solar PV":
+      return project.solarPvData ? {
+        primary: `${(project.solarPvData.annualEnergyProductionGj || 0).toFixed(2)} GJ/kW`,
+        detailed: [`Annual Energy Production: ${(project.solarPvData.annualEnergyProductionGj || 0).toFixed(6)} GJ/kW`]
+      } : null;
+    default:
+      return null;
+  }
+};
+
 export default function ProjectDashboard() {
   const [, setLocation] = useLocation();
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
@@ -291,77 +386,9 @@ export default function ProjectDashboard() {
                       <div className="mb-4 p-3 bg-gray-50 rounded-lg">
                         <h5 className="text-sm font-medium text-gray-700 mb-2">Saved Results:</h5>
                         <div className="text-xs text-gray-600 space-y-1">
-                          {tech.name === "Window Replacement" && project.windowsData && (
-                            <>
-                              <div>Gas Savings: {project.windowsData.gasSavings?.toFixed(6) || 0} GJ/year</div>
-                              <div>Electricity Savings: {project.windowsData.electricitySavings?.toFixed(6) || 0} GJ/year</div>
-                            </>
-                          )}
-                          {tech.name === "Door Replacement" && project.doorsData && (
-                            <>
-                              <div>Gas Savings: {project.doorsData.gasSavings?.toFixed(6) || 0} GJ/year</div>
-                              <div>Electricity Savings: {project.doorsData.electricitySavings?.toFixed(6) || 0} GJ/year</div>
-                            </>
-                          )}
-                          {tech.name === "Air Sealing" && project.airSealingData && (
-                            <div>Gas Savings: {project.airSealingData.gasSavings?.toFixed(6) || 0} GJ/year</div>
-                          )}
-                          {tech.name === "Attic Insulation" && project.atticInsulationData && (
-                            <>
-                              <div>Gas Savings: {project.atticInsulationData.gasSavings?.toFixed(6) || 0} GJ/year</div>
-                              <div>Electricity Savings: {project.atticInsulationData.electricitySavings?.toFixed(6) || 0} GJ/year</div>
-                            </>
-                          )}
-                          {tech.name === "DWHR - Gas" && project.dwhreData && (
-                            <>
-                              <div>Annual Energy Recovered: {project.dwhreData.annualEnergyRecovered?.toFixed(6) || 0} GJ/year</div>
-                              <div>Annual Fuel Saved: {project.dwhreData.annualFuelSaved?.toFixed(6) || 0} GJ/year</div>
-                            </>
-                          )}
-                          {tech.name === "DWHR - Electric" && project.dwhreElectricData && (
-                            <>
-                              <div>Annual Energy Recovered: {project.dwhreElectricData.annualEnergyRecovered?.toFixed(6) || 0} GJ/year</div>
-                              <div>Annual Fuel Saved: {project.dwhreElectricData.annualFuelSaved?.toFixed(6) || 0} GJ/year</div>
-                            </>
-                          )}
-                          {tech.name === "Heat Pump Water Heater - Gas" && project.heatPumpWaterHeaterData && (
-                            <>
-                              <div>Annual Energy Savings: {project.heatPumpWaterHeaterData.annualEnergySavings?.toFixed(6) || 0} GJ/year</div>
-                            </>
-                          )}
-                          {tech.name === "Heat Pump Water Heater - Electric" && project.heatPumpWaterHeaterElectricData && (
-                            <>
-                              <div>Annual Energy Savings: {project.heatPumpWaterHeaterElectricData.annualEnergySavings?.toFixed(6) || 0} GJ/year</div>
-                            </>
-                          )}
-                          {tech.name === "Heat Recovery Ventilator" && project.heatRecoveryVentilatorData && (
-                            <>
-                              <div>Annual Energy Savings - Gas: {project.heatRecoveryVentilatorData.annualEnergySavingsGas?.toFixed(6) || 0} GJ/year</div>
-                            </>
-                          )}
-                          {tech.name === "Smart Thermostat" && project.smartThermostatData && (
-                            <>
-                              <div>Annual Energy Savings - Gas: {project.smartThermostatData.annualEnergySavingsGas?.toFixed(6) || 0} GJ/year</div>
-                            </>
-                          )}
-                          {tech.name === "Ground Source Heat Pump" && project.groundSourceHeatPumpData && (
-                            <>
-                              <div>Annual Energy Savings - Gas: {project.groundSourceHeatPumpData.annualEnergySavingsGas?.toFixed(6) || 0} GJ/year</div>
-                              <div>Annual Energy Savings - Electricity: {project.groundSourceHeatPumpData.annualEnergySavingsElectricity?.toFixed(6) || 0} GJ/year</div>
-                            </>
-                          )}
-                          {tech.name === "DMSHP" && project.dmshpData && (
-                            <>
-                              <div>Annual Energy Savings - Gas: {project.dmshpData.annualEnergySavingsGas?.toFixed(6) || 0} GJ/year</div>
-                              <div>Annual Energy Savings - Heating Electricity: {project.dmshpData.annualEnergySavingsHeatingElectricity?.toFixed(6) || 0} GJ/year</div>
-                              <div>Annual Energy Savings - Cooling Electricity: {project.dmshpData.annualEnergySavingsCoolingElectricity?.toFixed(6) || 0} GJ/year</div>
-                            </>
-                          )}
-                          {tech.name === "Solar PV" && project.solarPvData && (
-                            <>
-                              <div>Annual Energy Production: {project.solarPvData.annualEnergyProductionGj?.toFixed(6) || 0} GJ/kW</div>
-                            </>
-                          )}
+                          {getTechnologyResults(tech.name, project)?.detailed.map((result, index) => (
+                            <div key={index}>{result}</div>
+                          ))}
                         </div>
                       </div>
                     )}
@@ -416,18 +443,43 @@ export default function ProjectDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Completed Technologies</h4>
-                  <div className="space-y-2">
-                    {technologies.map((tech) => (
-                      <div key={tech.path} className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">{tech.name}</span>
-                        <Badge variant={tech.hasData ? "default" : "outline"}>
-                          {tech.hasData ? "Complete" : "Pending"}
-                        </Badge>
-                      </div>
-                    ))}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                  <div className="overflow-x-auto">
+                    <div className="grid grid-cols-3 gap-4 min-w-full">
+                      <div className="font-medium text-sm text-gray-700 pb-2 border-b">Technology Name</div>
+                      <div className="font-medium text-sm text-gray-700 pb-2 border-b text-center">Status</div>
+                      <div className="font-medium text-sm text-gray-700 pb-2 border-b text-right">Results</div>
+                      
+                      {technologies.map((tech) => {
+                        const results = getTechnologyResults(tech.name, project);
+                        const resultLines = results?.detailed || [];
+                        
+                        return (
+                          <>
+                            <div key={`${tech.path}-name`} className="py-2 text-sm text-gray-900 border-b border-gray-100">
+                              {tech.name}
+                            </div>
+                            <div key={`${tech.path}-status`} className="py-2 text-center border-b border-gray-100">
+                              <Badge variant={tech.hasData ? "default" : "outline"} className="text-xs">
+                                {tech.hasData ? "Complete" : "Pending"}
+                              </Badge>
+                            </div>
+                            <div key={`${tech.path}-results`} className="py-2 text-right border-b border-gray-100">
+                              {tech.hasData ? (
+                                <div className="text-green-600 space-y-0.5">
+                                  {resultLines.map((result, index) => (
+                                    <div key={index} className="text-xs leading-tight">{result}</div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <span className="text-xs text-gray-400">No data</span>
+                              )}
+                            </div>
+                          </>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
                 <div>
@@ -437,6 +489,7 @@ export default function ProjectDashboard() {
                     <div>Last Modified: {new Date(project.lastModified).toLocaleDateString()}</div>
                     <div>Technologies Available: {technologies.length}</div>
                     <div>Technologies Completed: {technologies.filter(t => t.hasData).length}</div>
+                    <div>Results Saved: {technologies.filter(t => t.hasData).length}/{technologies.length}</div>
                   </div>
                 </div>
               </div>
