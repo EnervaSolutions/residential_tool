@@ -25,6 +25,7 @@ import GroundSourceHeatPumpPage from "@/pages/ground-source-heat-pump";
 import DmshpPage from "@/pages/dmshp";
 import SolarPvPage from "@/pages/solar-pv";
 import AudioRecordingPage from "@/pages/audio-recording";
+import InstructionsPage from "@/pages/instructions";
 import { FloatingRecorder } from "./components/floating-recorder";
 
 function Sidebar() {
@@ -48,7 +49,7 @@ function Sidebar() {
   }, []);
   
   // Only show sidebar on calculator pages
-  if (location === "/" || location === "/project-dashboard" || location === "/audio-recording") {
+  if (location === "/" || location === "/project-dashboard" || location === "/audio-recording" || location === "/instructions") {
     return null;
   }
   
@@ -196,7 +197,7 @@ function Sidebar() {
 
 function Router() {
   const [location] = useLocation();
-  const showSidebar = location !== "/" && location !== "/project-dashboard" && location !== "/audio-recording";
+  const showSidebar = location !== "/" && location !== "/project-dashboard" && location !== "/audio-recording" && location !== "/instructions";
   const [showSafariBanner, setShowSafariBanner] = useState(false);
 
   useEffect(() => {
@@ -221,6 +222,7 @@ function Router() {
       <div className={`flex-1 ${showSidebar ? "ml-64" : ""} ${showSafariBanner ? "pt-16" : ""}`}>
         <Switch>
           <Route path="/" component={WelcomePage} />
+          <Route path="/instructions" component={InstructionsPage} />
           <Route path="/project-dashboard" component={ProjectDashboard} />
           <Route path="/windows" component={WindowCalculator} />
           <Route path="/doors" component={DoorCalculator} />
