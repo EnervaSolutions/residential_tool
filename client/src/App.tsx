@@ -24,6 +24,7 @@ import SmartThermostatPage from "@/pages/smart-thermostat";
 import GroundSourceHeatPumpPage from "@/pages/ground-source-heat-pump";
 import DmshpPage from "@/pages/dmshp";
 import SolarPvPage from "@/pages/solar-pv";
+import ASHPReplacingFurnaceDSXPage from "@/pages/ashp-replacing-furnace-dsx";
 import AudioRecordingPage from "@/pages/audio-recording";
 import InstructionsPage from "@/pages/instructions";
 import { FloatingRecorder } from "./components/floating-recorder";
@@ -189,6 +190,15 @@ function Sidebar() {
               Solar PV
             </Button>
           </Link>
+          <Link href="/ashp-replacing-furnace-dsx">
+            <Button 
+              variant={location === "/ashp-replacing-furnace-dsx" ? "default" : "ghost"}
+              className="w-full justify-start"
+            >
+              <Thermometer className="w-4 h-4 mr-2" />
+              ASHP Replacing Furnace DSX
+            </Button>
+          </Link>
         </nav>
       </div>
     </div>
@@ -237,6 +247,7 @@ function Router() {
           <Route path="/ground-source-heat-pump" component={GroundSourceHeatPumpPage} />
           <Route path="/dmshp" component={DmshpPage} />
           <Route path="/solar-pv" component={SolarPvPage} />
+          <Route path="/ashp-replacing-furnace-dsx" component={ASHPReplacingFurnaceDSXPage} />
           <Route path="/audio-recording" component={AudioRecordingPage} />
           <Route component={NotFound} />
         </Switch>

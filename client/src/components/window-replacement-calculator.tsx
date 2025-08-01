@@ -45,7 +45,7 @@ export function WindowReplacementCalculator() {
 
   const form = useForm<CalculationInputs>({
     resolver: zodResolver(insertWindowCalculationSchema.omit({ name: true, notes: true, gasSavings: true, electricitySavings: true })),
-    defaultValues: project?.windowsData || defaultValues,
+    defaultValues: (project as any)?.windowsData || defaultValues,
     mode: "onChange"
   });
 

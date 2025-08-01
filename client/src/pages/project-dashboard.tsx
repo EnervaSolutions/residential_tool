@@ -102,6 +102,14 @@ const getTechnologyResults = (techName: string, project: any) => {
         primary: `${(project.solarPvData.annualEnergyProductionGj || 0).toFixed(2)} GJ/kW`,
         detailed: [`Annual Energy Production: ${(project.solarPvData.annualEnergyProductionGj || 0).toFixed(6)} GJ/kW`]
       } : null;
+    case "ASHP Replacing Furnace DSX":
+      return project.ashpData ? {
+        primary: `${(project.ashpData.gasSavings || 0).toFixed(2)} GJ/year`,
+        detailed: [
+          `Gas Savings: ${(project.ashpData.gasSavings || 0).toFixed(6)} GJ/year`,
+          `Electricity Savings: ${(project.ashpData.electricitySavings || 0).toFixed(6)} GJ/year`
+        ]
+      } : null;
     default:
       return null;
   }
@@ -311,6 +319,14 @@ export default function ProjectDashboard() {
       description: "1 kW Solar PV system energy production", 
       hasData: !!project.solarPvData,
       color: "yellow",
+    },
+    {
+      name: "ASHP Replacing Furnace DSX",
+      path: "/ashp-replacing-furnace-dsx",
+      icon: Thermometer,
+      description: "Air source heat pump replacing natural gas furnace", 
+      hasData: !!project.ashpData,
+      color: "red",
     },
   ];
 
