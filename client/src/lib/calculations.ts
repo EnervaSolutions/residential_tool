@@ -14,12 +14,83 @@ export interface CalculationInputs {
   btuToKbtu: number;
   kwhToGj: number;
 }
+// Editable ASHP calculation inputs
+export interface ASHPCalculationInputs {
+  eflhHeating: number;
+  eflhCooling: number;
+  btuhcExist: number;
+  seerExist: number;
+  btuhcEE: number;
+  btuhhExist: number;
+  btuhhEE: number;
+  furnanceEfficieny: number;
+  annualNaturalGasUsage: number;
+  annualHeatingEnergy: number;
+}
+
+// Constants for ASHP calculations
+export interface ASHPConstants {
+  seerRR: number;
+  hspfExist: number;
+  hspFee: number;
+  furnanceUsageFactor: number;
+  adjustmentFactor: number;
+  heatingDiversityFactor: number;
+  wToKwh: number;
+  kwhToGj: number;
+}
+
+// Combined interface for calculations
+export interface ASHPCalculationData extends ASHPCalculationInputs, ASHPConstants {}
+
+export interface ASHPCalculationResults {
+  gasSavings: number;
+  electricitySavings: number;
+}
 
 export interface CalculationResults {
   gasSavings: number;
   electricitySavings: number;
   deltaU: number;
 }
+
+export function calculateASHPSavings(inputs: ASHPCalculationData): ASHPCalculationResults {
+  const {
+  eflhHeating, // C19
+  eflhCooling, // C20
+  btuhcExist, // C21
+  seerExist, // C22
+  btuhcEE, // C23
+  seerRR, // C24
+  btuhhExist, // C25
+  btuhhEE, // C26
+  hspfExist, // C27
+  hspFee, // C28
+  furnanceEfficieny, // C29
+  annualNaturalGasUsage, // C30
+  furnanceUsageFactor, // C31
+  annualHeatingEnergy, // C32
+  adjustmentFactor, // C33
+  heatingDiversityFactor, // C34
+  wToKwh, // C35
+  kwhToGj // C36
+  } = inputs;
+
+  // Annual Energy Savings - Gas (GJ)
+  // Formula: anuualHeatingEnergy * (1 - furnanceUsageFactor)
+  const gasSavings = annualHeatingEnergy * (1 - furnanceUsageFactor)
+
+  // Annual Energy Savings - Electricity (GJ)
+  // const result = ((C21 * C20) / C22 / C35 * C36) - ((C23 * C20) / C24 / C35 * C36) - ((C26 * C19) / C28 * C36 / C35);
+
+  const electricitySavings = ((btuhcExist * eflhCooling / seerExist / wToKwh * kwhToGj) - ((btuhcEE * eflhCooling) / seerRR / wToKwh * kwhToGj) - ((btuhhEE * eflhHeating) / hspFee * (kwhToGj / wToKwh)));
+
+  return {
+    gasSavings,
+    electricitySavings
+  };
+}
+
 
 export function calculateWindowSavings(inputs: CalculationInputs): CalculationResults {
   const {
