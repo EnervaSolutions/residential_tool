@@ -7,7 +7,7 @@ import { Link, useLocation } from "wouter";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Calculator, Home, Wind, Zap, Droplets, FileText, Save, Download, Thermometer, Snowflake, Sun, Mic, Fan } from "lucide-react";
+import { Calculator, Home, BrickWall, Wind, Zap, Droplets, FileText, Save, Download, Thermometer, Snowflake, Sun, Mic, Fan } from "lucide-react";
 import { Project } from "@shared/schema";
 import { useProjectSwitch } from "@/hooks/useProjectSwitch";
 import { RecordingSavePrompt } from "@/components/recording-save-prompt";
@@ -125,6 +125,15 @@ const getTechnologyResults = (techName: string, project: any) => {
           `Electric Cooling Savings: ${(project.foundationInsulationData.electricCoolingSavings || 0).toFixed(6)} GJ/year`,
           `Gas Heating Savings: ${(project.foundationInsulationData.gasHeatingSavings || 0).toFixed(6)} GJ/year`,
           `Total Savings: ${(project.foundationInsulationData.totalSavings || 0).toFixed(6)} GJ/year`
+        ]
+      } : null;
+    case "Exterior Wall Insulation":
+      return project.exteriorWallInsulationData ? {
+        primary: `${(project.exteriorWallInsulationData.totalSavings || 0).toFixed(2)} GJ/year`,
+        detailed: [
+          `Electric Cooling Savings: ${(project.exteriorWallInsulationData.electricCoolingSavings || 0).toFixed(6)} GJ/year`,
+          `Gas Heating Savings: ${(project.exteriorWallInsulationData.gasHeatingSavings || 0).toFixed(6)} GJ/year`,
+          `Total Savings: ${(project.exteriorWallInsulationData.totalSavings || 0).toFixed(6)} GJ/year`
         ]
       } : null;
     default:
@@ -356,10 +365,18 @@ export default function ProjectDashboard() {
     {
       name: "Foundation Insulation",
       path: "/foundation-insulation",
-      icon: Home,
+      icon: BrickWall,
       description: "Install foundation insulation to reduce heat loss", 
       hasData: !!project.foundationInsulationData,
-      color: "slate",
+      color: "orange",
+    },
+    {
+      name: "Exterior Wall Insulation",
+      path: "/exterior-wall-insulation",
+      icon: Zap,
+      description: "Install exterior wall insulation to reduce heat loss", 
+      hasData: !!project.exteriorWallInsulationData,
+      color: "purple",
     },
   ];
 

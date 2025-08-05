@@ -139,7 +139,7 @@ export interface FoundationInsulationInputs {
   efficiencyHeating: number;
 }
 
-// Constants for ASHP calculations
+// Constants for Foundation Insulation calculations
 export interface FoundationInsulationConstants {
   rAdded: number;
   heightBasementWallAbove: number;
@@ -199,6 +199,82 @@ export function calculateFoundationInsulationSavings(inputs: FoundationInsulatio
   const gasHeatingSavings = (((((1/rOldAboveGrade - 1/(rOldAboveGrade + rAdded)) * lengthBasementWall * heightBasementWallAbove * (1-basementFramFactor)) + 
   ((1/rOldBelowGrade -1/(rOldAboveGrade + rAdded)) * lengthBasementWall * heightBasementWallBelow * (1 - basementFramFactor))) * numHoursDay * hDD) / (efficiencyHeating * btuToTherm))
   * adjustHeatSaving * thermToGj;
+
+  // Annual Energy Savings - Total (GJ)
+  // const result = electricCoolingSavings + gasHeatingSavings
+
+  const totalSavings = electricCoolingSavings + gasHeatingSavings;
+
+  return {
+    electricCoolingSavings,
+    gasHeatingSavings,
+    totalSavings
+  };
+}
+
+// Editable Exterior Wall Insulation calculation inputs
+export interface ExteriorWallInsulationInputs {
+  percentageAC: number;
+  rOld: number;
+  areaInsulatedWall: number;
+  cDD: number;
+  efficiencyAC: number;
+  hDD: number;
+  efficiencyHeating: number;
+}
+
+// Constants for Exterior Wall Insulation calculations
+export interface ExteriorWallInsulationConstants {
+  rNew: number;
+  wallFramFactor: number;
+  numHoursDay: number;
+  discretUseAdjustment: number;
+  btuToKbtu: number;
+  adjustCoolingSaving: number;
+  btuToTherm: number;
+  adjustHeatSaving: number;
+  kwhToGj: number;
+  thermToGj: number;
+}
+
+// Combined interface for Exterior Wall Insulation calculations
+export interface ExteriorWallInsulationCalculationData extends ExteriorWallInsulationInputs, ExteriorWallInsulationConstants {}
+
+export interface ExteriorWallInsulationCalculationResults {
+  electricCoolingSavings: number;
+  gasHeatingSavings: number;
+  totalSavings: number;
+}
+
+export function calculateExteriorWallInsulationSavings(inputs: ExteriorWallInsulationCalculationData): ExteriorWallInsulationCalculationResults {
+  const {
+  percentageAC, // C18
+  rNew, // C19
+  rOld, // C20
+  areaInsulatedWall, // C21
+  wallFramFactor, // C22
+  numHoursDay, // C23
+  cDD, // C24
+  discretUseAdjustment, // C25
+  btuToKbtu, // C26
+  efficiencyAC, // C27
+  adjustCoolingSaving, // C28
+  hDD, // C29
+  efficiencyHeating, // C30
+  btuToTherm, // C31
+  adjustHeatSaving, // C32
+  kwhToGj, // C33
+  thermToGj, // C34
+  } = inputs;
+
+  // Annual Energy Savings - Electric Cooling (GJ)
+  // Formula: = (((((1/C20-1/C19)*C21*(1-C22))*C24*C25*C23)/(C26*C27))*C18)*C33
+  const electricCoolingSavings =  (((((1 / rOld - 1 / rNew) * areaInsulatedWall * (1 - wallFramFactor)) * cDD * discretUseAdjustment * numHoursDay) / (btuToKbtu * efficiencyAC)) * percentageAC) * kwhToGj;
+
+  // Annual Energy Savings - Gas Heating (GJ)
+  // const result = ((((1/C20-1/C19)*C21*(1-C22))*C23*C29)/(C30*C31)*C32)*C34
+
+  const gasHeatingSavings = ((((1 / rOld - 1/rNew) * areaInsulatedWall * (1 - wallFramFactor)) * numHoursDay * hDD) / (efficiencyHeating*btuToTherm)*adjustHeatSaving) * thermToGj;
 
   // Annual Energy Savings - Total (GJ)
   // const result = electricCoolingSavings + gasHeatingSavings

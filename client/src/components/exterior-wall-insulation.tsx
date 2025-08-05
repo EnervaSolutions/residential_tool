@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { BrickWall , Save, Flame, Zap } from "lucide-react";
+import { Save, Flame, Zap } from "lucide-react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,37 +10,34 @@ import { apiRequest } from "@/lib/queryClient";
 import { MeasureInterface } from "./measure-interface";
 import { CommonValuesDialog } from "./common-values-dialog";
 import { getCommonValues } from "@/data/common-values";
-import { FoundationInsulationInputs, FoundationInsulationConstants, FoundationInsulationCalculationData } from "@/lib/calculations";
-import { calculateFoundationInsulationSavings } from "@/lib/calculations";
+import { ExteriorWallInsulationInputs, ExteriorWallInsulationConstants, ExteriorWallInsulationCalculationData } from "@/lib/calculations";
+import { calculateExteriorWallInsulationSavings } from "@/lib/calculations";
 
-const defaultValues: FoundationInsulationInputs = {
-    percentageAC:0.37,
-    rOldAboveGrade:2.00,
-    lengthBasementWall:125.00,
-    cDD:1232.00,
-    efficiencyAC:13.40,
-    hDD:9166.00,
-    rOldBelowGrade:7.4,
-    efficiencyHeating:0.80,
+const defaultValues: ExteriorWallInsulationInputs = {
+  percentageAC: 0.37,
+  rOld: 5.00,
+  areaInsulatedWall: 2248.00,
+  cDD: 1232.00,
+  efficiencyAC: 13.40,
+  hDD: 9166.00,
+  efficiencyHeating: 0.80,
 };
 
 // Constants that are not editable
-const foundationInsulationConstants: FoundationInsulationConstants = {
-    rAdded:12.00,
-    heightBasementWallAbove:3.00,
-    basementFramFactor:0.25,
-    numHoursDay:24.00,
-    discretUseAdjustment:0.75,
-    btuToKbtu:1000,
-    adjustCoolingSaving:0.75,
-    heightBasementWallBelow:5.00,
-    btuToTherm:100000,
-    adjustHeatSaving:0.73,
-    kwhToGj:0.0036,
-    thermToGj:0.105506,
+const exteriorWallInsulationConstants: ExteriorWallInsulationConstants = {
+  rNew: 10.00,
+  wallFramFactor: 0.25,
+  numHoursDay: 24.00,
+  discretUseAdjustment: 0.75,
+  btuToKbtu: 1000,
+  adjustCoolingSaving: 0.75,
+  btuToTherm: 100000,
+  adjustHeatSaving: 0.63,
+  kwhToGj: 0.0036,
+  thermToGj: 0.105506,
 };
 
-export function FoundationInsulationCalculator() {
+export function ExteriorWallInsulationCalculator() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const currentProjectId = localStorage.getItem("currentProjectId");
@@ -50,26 +47,26 @@ export function FoundationInsulationCalculator() {
     enabled: !!currentProjectId,
   });
 
-  const form = useForm<FoundationInsulationInputs>({
-    defaultValues: (project as any)?.foundationInsulationData || defaultValues,
+  const form = useForm<ExteriorWallInsulationInputs>({
+    defaultValues: (project as any)?.exteriorWallInsulationData || defaultValues,
     mode: "onChange"
   });
 
   const saveCalculation = useMutation({
-    mutationFn: async (data: FoundationInsulationInputs) => {
+    mutationFn: async (data: ExteriorWallInsulationInputs) => {
       if (!currentProjectId) {
         throw new Error("No project selected");
       }
       
       // Calculate results for saving
-      const combinedData: FoundationInsulationCalculationData = {
+      const combinedData: ExteriorWallInsulationCalculationData = {
         ...data,
-        ...foundationInsulationConstants
+        ...exteriorWallInsulationConstants
       };
-      const calculatedResults = calculateFoundationInsulationSavings(combinedData);
+      const calculatedResults = calculateExteriorWallInsulationSavings(combinedData);
       
       const projectUpdateData = {
-        foundationInsulationData: {
+        exteriorWallInsulationData: {
           ...data,
           electricCoolingSavings: calculatedResults.electricCoolingSavings,
           gasHeatingSavings: calculatedResults.gasHeatingSavings,
@@ -82,8 +79,8 @@ export function FoundationInsulationCalculator() {
     },
     onSuccess: () => {
       toast({
-        title: "Foundation Insulation Data Saved",
-        description: "Your Foundation Insulation calculation has been saved to the project.",
+        title: "Exterior Wall Insulation Data Saved",
+        description: "Your Exterior Wall Insulation calculation has been saved to the project.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/projects", currentProjectId] });
     },
@@ -104,29 +101,28 @@ export function FoundationInsulationCalculator() {
   const watchedValues = form.watch();
 
   const results = useMemo(() => {
-    const combinedData: FoundationInsulationCalculationData = {
+    const combinedData: ExteriorWallInsulationCalculationData = {
       ...watchedValues,
-      ...foundationInsulationConstants
+      ...exteriorWallInsulationConstants
     };
-    return calculateFoundationInsulationSavings(combinedData);
+    return calculateExteriorWallInsulationSavings(combinedData);
   }, [
     watchedValues.percentageAC,
-    watchedValues.rOldAboveGrade,
-    watchedValues.lengthBasementWall,
+    watchedValues.rOld,
+    watchedValues.areaInsulatedWall,
     watchedValues.cDD,
     watchedValues.efficiencyAC,
     watchedValues.hDD,
-    watchedValues.rOldBelowGrade,
     watchedValues.efficiencyHeating,
   ]);
 
   const overview = {
-    technologyName: "Foundation Insulation",
+    technologyName: "Exterior Wall Insulation",
     category: "Building Envelope",
     lifetime: "30 years",
-    baseCase: "Existing foundation insulation",
-    efficientCase: "Adding R-12 insulation to existing foundation",
-    description: "Install foundation insulation to reduce heat loss through basement walls"
+    baseCase: "Existing exterior wall insulation",
+    efficientCase: "Upgrading to R-13 insulation on exterior walls",
+    description: "Install exterior wall insulation to reduce heat loss through above-grade walls"
   };
 
   const calculationInputs = (
@@ -134,7 +130,7 @@ export function FoundationInsulationCalculator() {
       <div className="space-y-8">
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-6 pb-2 border-b-2 border-blue-200">
-            Foundation Insulation System Properties
+            Exterior Wall Insulation System Properties
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -159,23 +155,23 @@ export function FoundationInsulationCalculator() {
             />
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">R-Value Added</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">R-Value New</label>
               <Input 
                 type="number" 
                 title="Constant"
-                value={foundationInsulationConstants.rAdded}
+                value={exteriorWallInsulationConstants.rNew}
                 disabled
                 className="bg-gray-100 text-gray-700"
               />
-              <p className="text-xs text-gray-500 mt-1">R-value of added insulation</p>
+              <p className="text-xs text-gray-500 mt-1">R-value of new insulation</p>
             </div>
 
             <FormField
               control={form.control}
-              name="rOldAboveGrade"
+              name="rOld"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>R-Value Old Above Grade</FormLabel>
+                  <FormLabel>R-Value Old Wall</FormLabel>
                   <FormControl>
                     <Input 
                       type="number" 
@@ -184,7 +180,7 @@ export function FoundationInsulationCalculator() {
                       onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                     />
                   </FormControl>
-                  <p className="text-xs text-gray-500">R-value of existing insulation above grade</p>
+                  <p className="text-xs text-gray-500">R-value of existing wall insulation</p>
                   <FormMessage />
                 </FormItem>
               )}
@@ -192,10 +188,10 @@ export function FoundationInsulationCalculator() {
 
             <FormField
               control={form.control}
-              name="lengthBasementWall"
+              name="areaInsulatedWall"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Length of Basement Wall (ft)</FormLabel>
+                  <FormLabel>Wall Area (sq ft)</FormLabel>
                   <FormControl>
                     <Input 
                       type="number" 
@@ -204,34 +200,22 @@ export function FoundationInsulationCalculator() {
                       onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                     />
                   </FormControl>
-                  <p className="text-xs text-gray-500">Linear feet of basement wall perimeter</p>
+                  <p className="text-xs text-gray-500">Total exterior wall area to be insulated</p>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Height Basement Wall Above Grade (ft)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Wall Framing Factor</label>
               <Input 
                 type="number" 
                 title="Constant"
-                value={foundationInsulationConstants.heightBasementWallAbove}
+                value={exteriorWallInsulationConstants.wallFramFactor}
                 disabled
                 className="bg-gray-100 text-gray-700"
               />
-              <p className="text-xs text-gray-500 mt-1">Height of basement wall above grade (ft)</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Basement Framing Factor</label>
-              <Input 
-                type="number" 
-                title="Constant"
-                value={foundationInsulationConstants.basementFramFactor}
-                disabled
-                className="bg-gray-100 text-gray-700"
-              />
-              <p className="text-xs text-gray-500 mt-1">Framing factor for basement walls</p>
+              <p className="text-xs text-gray-500 mt-1">Framing factor for exterior walls</p>
             </div>
             
             <div>
@@ -239,7 +223,7 @@ export function FoundationInsulationCalculator() {
               <Input 
                 type="number" 
                 title="Constant"
-                value={foundationInsulationConstants.numHoursDay}
+                value={exteriorWallInsulationConstants.numHoursDay}
                 disabled
                 className="bg-gray-100 text-gray-700"
               />
@@ -271,7 +255,7 @@ export function FoundationInsulationCalculator() {
               <Input 
                 type="number" 
                 title="Constant"
-                value={foundationInsulationConstants.discretUseAdjustment}
+                value={exteriorWallInsulationConstants.discretUseAdjustment}
                 disabled
                 className="bg-gray-100 text-gray-700"
               />
@@ -303,7 +287,7 @@ export function FoundationInsulationCalculator() {
               <Input 
                 type="number" 
                 title="Constant"
-                value={foundationInsulationConstants.adjustCoolingSaving}
+                value={exteriorWallInsulationConstants.adjustCoolingSaving}
                 disabled
                 className="bg-gray-100 text-gray-700"
               />
@@ -332,38 +316,6 @@ export function FoundationInsulationCalculator() {
 
             <FormField
               control={form.control}
-              name="rOldBelowGrade"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>R-Value Old Below Grade</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      step="0.01" 
-                      {...field}
-                      onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                    />
-                  </FormControl>
-                  <p className="text-xs text-gray-500">R-value of existing insulation below grade</p>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Height Basement Wall Below Grade</label>
-              <Input 
-                type="number" 
-                title="Constant"
-                value={foundationInsulationConstants.heightBasementWallBelow}
-                disabled
-                className="bg-gray-100 text-gray-700"
-              />
-              <p className="text-xs text-gray-500 mt-1">Height of basement wall below grade (ft)</p>
-            </div>
-
-            <FormField
-              control={form.control}
               name="efficiencyHeating"
               render={({ field }) => (
                 <FormItem>
@@ -387,7 +339,7 @@ export function FoundationInsulationCalculator() {
               <Input 
                 type="number" 
                 title="Constant"
-                value={foundationInsulationConstants.adjustHeatSaving}
+                value={exteriorWallInsulationConstants.adjustHeatSaving}
                 disabled
                 className="bg-gray-100 text-gray-700"
               />
@@ -403,7 +355,7 @@ export function FoundationInsulationCalculator() {
               <Input 
                 type="number" 
                 title="Constant"
-                value={foundationInsulationConstants.btuToKbtu}
+                value={exteriorWallInsulationConstants.btuToKbtu}
                 disabled
                 className="bg-gray-100 text-gray-700"
               />
@@ -415,7 +367,7 @@ export function FoundationInsulationCalculator() {
               <Input 
                 type="number" 
                 title="Constant"
-                value={foundationInsulationConstants.btuToTherm}
+                value={exteriorWallInsulationConstants.btuToTherm}
                 disabled
                 className="bg-gray-100 text-gray-700"
               />
@@ -427,7 +379,7 @@ export function FoundationInsulationCalculator() {
               <Input 
                 type="number" 
                 title="Constant"
-                value={foundationInsulationConstants.kwhToGj}
+                value={exteriorWallInsulationConstants.kwhToGj}
                 disabled
                 className="bg-gray-100 text-gray-700"
               />
@@ -439,7 +391,7 @@ export function FoundationInsulationCalculator() {
               <Input 
                 type="number" 
                 title="Constant"
-                value={foundationInsulationConstants.thermToGj}
+                value={exteriorWallInsulationConstants.thermToGj}
                 disabled
                 className="bg-gray-100 text-gray-700"
               />
@@ -458,7 +410,7 @@ export function FoundationInsulationCalculator() {
             <Zap className="text-blue-600 w-5 h-5" />
           <span className="text-sm font-medium text-blue-900">Annual Electric Cooling Savings</span>
         </div>
-        <p className="text-2xl font-bold text-blue-600">{results.electricCoolingSavings.toFixed(6)} GJ</p>
+        <p className="text-2xl font-bold text-blue-600">{results.electricCoolingSavings.toFixed(4)} GJ</p>
       </div>
       
       <div className="p-4 bg-green-50 rounded-lg">
@@ -466,15 +418,15 @@ export function FoundationInsulationCalculator() {
             <Flame className="text-green-600 w-5 h-5" />
           <span className="text-sm font-medium text-green-900">Annual Gas Heating Savings</span>
         </div>
-        <p className="text-2xl font-bold text-green-600">{results.gasHeatingSavings.toFixed(6)} GJ</p>
+        <p className="text-2xl font-bold text-green-600">{results.gasHeatingSavings.toFixed(4)} GJ</p>
       </div>
       
       <div className="p-4 bg-purple-50 rounded-lg">
         <div className="flex items-center space-x-2 mb-2">
-            <BrickWall  className="text-purple-600 w-5 h-5" />
+            <Zap className="text-purple-600 w-5 h-5" />
           <span className="text-sm font-medium text-purple-900">Total Annual Savings</span>
         </div>
-        <p className="text-2xl font-bold text-purple-600">{results.totalSavings.toFixed(6)} GJ</p>
+        <p className="text-2xl font-bold text-purple-600">{results.totalSavings.toFixed(4)} GJ</p>
       </div>
     </div>
   );
@@ -482,8 +434,8 @@ export function FoundationInsulationCalculator() {
   const headerActions = (
     <>
       <CommonValuesDialog 
-        values={getCommonValues('foundationInsulation')} 
-        title="Common Values for Foundation Insulation Calculations"
+        values={getCommonValues('exteriorWallInsulation')} 
+        title="Common Values for Exterior Wall Insulation Calculations"
       />
       <Button 
         onClick={handleSave} 
@@ -498,9 +450,9 @@ export function FoundationInsulationCalculator() {
 
   return (
     <MeasureInterface
-      title="Foundation Insulation"
+      title="Exterior Wall Insulation"
       subtitle="Energy Efficiency Retrofit Calculator"
-      icon={<BrickWall  />}
+      icon={<Zap />}
       overview={overview}
       calculationInputs={calculationInputs}
       output={output}
