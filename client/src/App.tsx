@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Calculator, Home, Wind, Zap, Droplets, Thermometer, Snowflake, Sun, AlertTriangle, X, Fan } from "lucide-react";
+import { Calculator, Home, Wind, Zap, Droplets, BrickWall, Thermometer, Snowflake, Sun, AlertTriangle, X, Fan } from "lucide-react";
 import { useState, useEffect } from "react";
 import { isSafari } from "@/lib/utils";
 import NotFound from "@/pages/not-found";
@@ -27,6 +27,7 @@ import SolarPvPage from "@/pages/solar-pv";
 import ASHPReplacingFurnaceDSXPage from "@/pages/ashp-replacing-furnace-dsx";
 import ASHPReplacingASHPPage from "./pages/ashp-replacing-ashp";
 import FoundationInsulationPage from "@/pages/foundation-insulation";
+import ExteriorWallInsulationPage from "@/pages/exterior-wall-insulation";
 import AudioRecordingPage from "@/pages/audio-recording";
 import InstructionsPage from "@/pages/instructions";
 import { FloatingRecorder } from "./components/floating-recorder";
@@ -215,8 +216,17 @@ function Sidebar() {
               variant={location === "/foundation-insulation" ? "default" : "ghost"}
               className="w-full justify-start"
             >
-              <Home className="w-4 h-4 mr-2" />
+              <BrickWall className="w-4 h-4 mr-2" />
               Foundation Insulation
+            </Button>
+          </Link>
+          <Link href="/exterior-wall-insulation">
+            <Button 
+              variant={location === "/exterior-wall-insulation" ? "default" : "ghost"}
+              className="w-full justify-start"
+            >
+              <Zap className="w-4 h-4 mr-2" />
+              Exterior Wall Insulation
             </Button>
           </Link>
         </nav>
@@ -270,6 +280,7 @@ function Router() {
           <Route path="/ashp-replacing-furnace-dsx" component={ASHPReplacingFurnaceDSXPage} />
           <Route path="/ashp-replacing-ashp" component={ASHPReplacingASHPPage} />
           <Route path="/foundation-insulation" component={FoundationInsulationPage} />
+          <Route path="/exterior-wall-insulation" component={ExteriorWallInsulationPage} />
           <Route path="/audio-recording" component={AudioRecordingPage} />
           <Route component={NotFound} />
         </Switch>
