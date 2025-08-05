@@ -40,10 +40,37 @@ export interface ASHPConstants {
   kwhToGj: number;
 }
 
-// Combined interface for calculations
+// Editable ASHP Replacing calculation inputs
+export interface ASHPReplaceCalculationInputs {
+  eflhHeating: number;
+  eflhCooling: number;
+  btuhcExist: number;
+  btuhcEE: number;
+}
+
+// Constants for ASHP Replacing calculations constants
+export interface ASHPReplaceConstants {
+  seerExist: number;
+  seerEE: number;
+  btuhhExist: number;
+  btuhhEE: number;
+  hspfExist: number;
+  hspFee: number;
+  kwhToGj: number;
+}
+
+// Combined interface for ASHP calculations
 export interface ASHPCalculationData extends ASHPCalculationInputs, ASHPConstants {}
 
+// Combined interface for ASHP Replace calculations
+export interface ASHPReplaceCalculationData extends ASHPReplaceCalculationInputs, ASHPReplaceConstants {}
+
 export interface ASHPCalculationResults {
+  gasSavings: number;
+  electricitySavings: number;
+}
+
+export interface ASHPReplaceCalculationResults {
   gasSavings: number;
   electricitySavings: number;
 }
@@ -84,6 +111,35 @@ export function calculateASHPSavings(inputs: ASHPCalculationData): ASHPCalculati
   // const result = ((C21 * C20) / C22 / C35 * C36) - ((C23 * C20) / C24 / C35 * C36) - ((C26 * C19) / C28 * C36 / C35);
 
   const electricitySavings = ((btuhcExist * eflhCooling / seerExist / wToKwh * kwhToGj) - ((btuhcEE * eflhCooling) / seerRR / wToKwh * kwhToGj) - ((btuhhEE * eflhHeating) / hspFee * (kwhToGj / wToKwh)));
+
+  return {
+    gasSavings,
+    electricitySavings
+  };
+}
+export function calculateASHPReplaceSavings(inputs: ASHPReplaceCalculationData): ASHPReplaceCalculationResults {
+  const {
+  eflhHeating, // C18
+  eflhCooling, // C19
+  btuhcExist, // C20
+  seerExist, // C21
+  btuhcEE, // C22
+  seerEE, // C23
+  btuhhExist, // C24
+  btuhhEE, // C25
+  hspfExist, // C26
+  hspFee, // C27
+  kwhToGj // C28
+  } = inputs;
+
+  // Annual Energy Savings - Gas (GJ)
+  // Formula: =C28*C18*((C24/C26)-(C25/C27))/1000
+  const gasSavings = kwhToGj * eflhHeating * ((btuhhExist/hspfExist) - (btuhhEE/hspFee))/1000
+
+  // Annual Energy Savings - Electricity (GJ)
+  // const result = =C28*C19*((C20/C21)-(C22/C23))/1000
+
+  const electricitySavings = kwhToGj * eflhCooling * ((btuhcExist/seerExist) - (btuhcEE/seerEE))/1000;
 
   return {
     gasSavings,

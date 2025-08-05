@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Calculator, Home, Wind, Zap, Droplets, Thermometer, Snowflake, Sun, AlertTriangle, X } from "lucide-react";
+import { Calculator, Home, Wind, Zap, Droplets, Thermometer, Snowflake, Sun, AlertTriangle, X, Fan } from "lucide-react";
 import { useState, useEffect } from "react";
 import { isSafari } from "@/lib/utils";
 import NotFound from "@/pages/not-found";
@@ -25,6 +25,7 @@ import GroundSourceHeatPumpPage from "@/pages/ground-source-heat-pump";
 import DmshpPage from "@/pages/dmshp";
 import SolarPvPage from "@/pages/solar-pv";
 import ASHPReplacingFurnaceDSXPage from "@/pages/ashp-replacing-furnace-dsx";
+import ASHPReplacingASHPPage from "./pages/ashp-replacing-ashp";
 import AudioRecordingPage from "@/pages/audio-recording";
 import InstructionsPage from "@/pages/instructions";
 import { FloatingRecorder } from "./components/floating-recorder";
@@ -199,6 +200,15 @@ function Sidebar() {
               ASHP Replacing Furnace DSX
             </Button>
           </Link>
+          <Link href="/ashp-replacing-ashp">
+            <Button 
+              variant={location === "/ashp-replacing-ashp" ? "default" : "ghost"}
+              className="w-full justify-start"
+            >
+              <Fan className="w-4 h-4 mr-2" />
+              ASHP Replacing ASHP
+            </Button>
+          </Link>
         </nav>
       </div>
     </div>
@@ -248,6 +258,7 @@ function Router() {
           <Route path="/dmshp" component={DmshpPage} />
           <Route path="/solar-pv" component={SolarPvPage} />
           <Route path="/ashp-replacing-furnace-dsx" component={ASHPReplacingFurnaceDSXPage} />
+          <Route path="/ashp-replacing-ashp" component={ASHPReplacingASHPPage} />
           <Route path="/audio-recording" component={AudioRecordingPage} />
           <Route component={NotFound} />
         </Switch>

@@ -59,8 +59,19 @@ export function ASHPReplacingFurnaceDSXCalculator() {
         throw new Error("No project selected");
       }
       
+      // Calculate results for saving
+      const combinedData: ASHPCalculationData = {
+        ...data,
+        ...ashpConstants
+      };
+      const calculatedResults = calculateASHPSavings(combinedData);
+      
       const projectUpdateData = {
-        ashpData: data
+        ashpData: {
+          ...data,
+          gasSavings: calculatedResults.gasSavings,
+          electricitySavings: calculatedResults.electricitySavings
+        }
       };
       
       const response = await apiRequest(`/api/projects/${currentProjectId}`, "PATCH", projectUpdateData);

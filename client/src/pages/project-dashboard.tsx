@@ -7,7 +7,7 @@ import { Link, useLocation } from "wouter";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Calculator, Home, Wind, Zap, Droplets, FileText, Save, Download, Thermometer, Snowflake, Sun, Mic } from "lucide-react";
+import { Calculator, Home, Wind, Zap, Droplets, FileText, Save, Download, Thermometer, Snowflake, Sun, Mic, Fan } from "lucide-react";
 import { Project } from "@shared/schema";
 import { useProjectSwitch } from "@/hooks/useProjectSwitch";
 import { RecordingSavePrompt } from "@/components/recording-save-prompt";
@@ -108,6 +108,14 @@ const getTechnologyResults = (techName: string, project: any) => {
         detailed: [
           `Gas Savings: ${(project.ashpData.gasSavings || 0).toFixed(6)} GJ/year`,
           `Electricity Savings: ${(project.ashpData.electricitySavings || 0).toFixed(6)} GJ/year`
+        ]
+      } : null;
+    case "ASHP Replacing ASHP":
+      return project.ashpReplacingAshpData ? {
+        primary: `${(project.ashpReplacingAshpData.gasSavings || 0).toFixed(2)} GJ/year`,
+        detailed: [
+          `Gas Savings: ${(project.ashpReplacingAshpData.gasSavings || 0).toFixed(6)} GJ/year`,
+          `Electricity Savings: ${(project.ashpReplacingAshpData.electricitySavings || 0).toFixed(6)} GJ/year`
         ]
       } : null;
     default:
@@ -327,6 +335,14 @@ export default function ProjectDashboard() {
       description: "Air source heat pump replacing natural gas furnace", 
       hasData: !!project.ashpData,
       color: "red",
+    },
+    {
+      name: "ASHP Replacing ASHP",
+      path: "/ashp-replacing-ashp",
+      icon: Fan,
+      description: "High performance ASHP replacing conventional ASHP", 
+      hasData: !!project.ashpReplacingAshpData,
+      color: "teal",
     },
   ];
 
