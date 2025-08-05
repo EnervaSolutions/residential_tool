@@ -14,21 +14,21 @@ import { ASHPReplaceCalculationInputs, ASHPReplaceConstants, ASHPReplaceCalculat
 import { calculateASHPReplaceSavings } from "@/lib/calculations";
 
 const defaultValues: ASHPReplaceCalculationInputs = {
-    eflhHeating:1998.00,
-    eflhCooling:1161.00,
-    btuhcExist:36000.00,
-    btuhcEE:36000.00,
+  eflhHeating: 1998.00,
+  eflhCooling: 1161.00,
+  btuhcExist: 36000.00,
+  btuhcEE: 36000.00,
 };
 
 // Constants that are not editable
 const ashpReplaceConstants: ASHPReplaceConstants = {
-    seerExist:14.00,
-    seerEE:15.00,
-    btuhhExist:80000.00,
-    btuhhEE:80000.00,
-    hspfExist:8.20,
-    hspFee:8.50,
-    kwhToGj:0.0036,
+  seerExist: 14.00,
+  seerEE: 15.00,
+  btuhhExist: 80000.00,
+  btuhhEE: 80000.00,
+  hspfExist: 8.20,
+  hspFee: 8.50,
+  kwhToGj: 0.0036,
 };
 
 export function ASHPReplacingASHPCalculator() {
@@ -51,14 +51,14 @@ export function ASHPReplacingASHPCalculator() {
       if (!currentProjectId) {
         throw new Error("No project selected");
       }
-      
+
       // Calculate results for saving
       const combinedData: ASHPReplaceCalculationData = {
         ...data,
         ...ashpReplaceConstants
       };
       const calculatedResults = calculateASHPReplaceSavings(combinedData);
-      
+
       const projectUpdateData = {
         ashpReplacingAshpData: {
           ...data,
@@ -66,7 +66,7 @@ export function ASHPReplacingASHPCalculator() {
           electricitySavings: calculatedResults.electricitySavings
         }
       };
-      
+
       const response = await apiRequest(`/api/projects/${currentProjectId}`, "PATCH", projectUpdateData);
       return response.json();
     },
@@ -130,9 +130,9 @@ export function ASHPReplacingASHPCalculator() {
                 <FormItem>
                   <FormLabel>Equivalent Full Load Hours - Heating</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="number" 
-                      step="0.01" 
+                    <Input
+                      type="number"
+                      step="0.01"
                       {...field}
                       onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                     />
@@ -150,9 +150,9 @@ export function ASHPReplacingASHPCalculator() {
                 <FormItem>
                   <FormLabel>Equivalent Full Load Hours - Cooling</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="number" 
-                      step="0.01" 
+                    <Input
+                      type="number"
+                      step="0.01"
                       {...field}
                       onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                     />
@@ -170,9 +170,9 @@ export function ASHPReplacingASHPCalculator() {
                 <FormItem>
                   <FormLabel>Existing Cooling Capacity (BTU/h)</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="number" 
-                      step="1" 
+                    <Input
+                      type="number"
+                      step="1"
                       {...field}
                       onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                     />
@@ -182,11 +182,11 @@ export function ASHPReplacingASHPCalculator() {
                 </FormItem>
               )}
             />
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Existing SEER Rating</label>
-              <Input 
-                type="number" 
+              <Input
+                type="number"
                 title="Constant"
                 value={ashpReplaceConstants.seerExist}
                 disabled
@@ -203,9 +203,9 @@ export function ASHPReplacingASHPCalculator() {
                 <FormItem>
                   <FormLabel>Energy Efficient Cooling Capacity (BTU/h)</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="number" 
-                      step="1" 
+                    <Input
+                      type="number"
+                      step="1"
                       {...field}
                       onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                     />
@@ -218,8 +218,8 @@ export function ASHPReplacingASHPCalculator() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">ASHP SEER Rating</label>
-              <Input 
-                type="number" 
+              <Input
+                type="number"
                 title="Constant"
                 value={ashpReplaceConstants.seerEE}
                 disabled
@@ -230,8 +230,8 @@ export function ASHPReplacingASHPCalculator() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Existing Heating Capacity (BTU/h)</label>
-              <Input 
-                type="number" 
+              <Input
+                type="number"
                 title="Constant"
                 value={ashpReplaceConstants.btuhhExist}
                 disabled
@@ -242,8 +242,8 @@ export function ASHPReplacingASHPCalculator() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">ASHP Heating Capacity (BTU/h)</label>
-              <Input 
-                type="number" 
+              <Input
+                type="number"
                 title="Constant"
                 value={ashpReplaceConstants.btuhhEE}
                 disabled
@@ -254,8 +254,8 @@ export function ASHPReplacingASHPCalculator() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Existing HSPF Rating</label>
-              <Input 
-                type="number" 
+              <Input
+                type="number"
                 title="Constant"
                 value={ashpReplaceConstants.hspfExist}
                 disabled
@@ -266,8 +266,8 @@ export function ASHPReplacingASHPCalculator() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">ASHP HSPF Rating</label>
-              <Input 
-                type="number" 
+              <Input
+                type="number"
                 title="Constant"
                 value={ashpReplaceConstants.hspFee}
                 disabled
@@ -276,19 +276,22 @@ export function ASHPReplacingASHPCalculator() {
               <p className="text-xs text-gray-500 mt-1">ASHP Heating Seasonal Performance Factor</p>
             </div>
 
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">kWh to GJ Conversion</label>
-              <Input 
-                type="number" 
-                title="Constant"
-                value={ashpReplaceConstants.kwhToGj}
-                disabled
-                className="bg-gray-100 text-gray-700"
-              />
-              <p className="text-xs text-gray-500 mt-1">kilowatt-hours to gigajoules</p>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Conversion Factors (Constants)</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">kWh to GJ Conversion</label>
+                  <Input
+                    type="number"
+                    title="Constant"
+                    value={ashpReplaceConstants.kwhToGj}
+                    disabled
+                    className="bg-gray-100 text-gray-700"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">kilowatt-hours to gigajoules</p>
+                </div>
+              </div>
             </div>
-
           </div>
         </div>
       </div>
@@ -299,15 +302,15 @@ export function ASHPReplacingASHPCalculator() {
     <div className="space-y-4">
       <div className="p-4 bg-green-50 rounded-lg">
         <div className="flex items-center space-x-2 mb-2">
-            <Flame className="text-green-600 w-5 h-5" />
+          <Flame className="text-green-600 w-5 h-5" />
           <span className="text-sm font-medium text-green-900">Annual Gas Savings</span>
         </div>
         <p className="text-2xl font-bold text-green-600">{results.gasSavings.toFixed(6)} GJ</p>
       </div>
-      
+
       <div className="p-4 bg-blue-50 rounded-lg">
         <div className="flex items-center space-x-2 mb-2">
-            <Zap className="text-blue-600 w-5 h-5" />
+          <Zap className="text-blue-600 w-5 h-5" />
           <span className="text-sm font-medium text-blue-900">Annual Electricity Savings</span>
         </div>
         <p className="text-2xl font-bold text-blue-600">{results.electricitySavings.toFixed(6)} GJ</p>
@@ -317,13 +320,13 @@ export function ASHPReplacingASHPCalculator() {
 
   const headerActions = (
     <>
-      <CommonValuesDialog 
-        values={getCommonValues('ashp')} 
+      <CommonValuesDialog
+        values={getCommonValues('ashp')}
         title="Common Values for ASHP Replace Calculations"
       />
-      <Button 
-        onClick={handleSave} 
-        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2" 
+      <Button
+        onClick={handleSave}
+        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2"
         disabled={saveCalculation.isPending}
       >
         <Save className="w-4 h-4 mr-2" />

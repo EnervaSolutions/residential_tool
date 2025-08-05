@@ -26,6 +26,7 @@ import DmshpPage from "@/pages/dmshp";
 import SolarPvPage from "@/pages/solar-pv";
 import ASHPReplacingFurnaceDSXPage from "@/pages/ashp-replacing-furnace-dsx";
 import ASHPReplacingASHPPage from "./pages/ashp-replacing-ashp";
+import FoundationInsulationPage from "@/pages/foundation-insulation";
 import AudioRecordingPage from "@/pages/audio-recording";
 import InstructionsPage from "@/pages/instructions";
 import { FloatingRecorder } from "./components/floating-recorder";
@@ -209,6 +210,15 @@ function Sidebar() {
               ASHP Replacing ASHP
             </Button>
           </Link>
+          <Link href="/foundation-insulation">
+            <Button 
+              variant={location === "/foundation-insulation" ? "default" : "ghost"}
+              className="w-full justify-start"
+            >
+              <Home className="w-4 h-4 mr-2" />
+              Foundation Insulation
+            </Button>
+          </Link>
         </nav>
       </div>
     </div>
@@ -259,6 +269,7 @@ function Router() {
           <Route path="/solar-pv" component={SolarPvPage} />
           <Route path="/ashp-replacing-furnace-dsx" component={ASHPReplacingFurnaceDSXPage} />
           <Route path="/ashp-replacing-ashp" component={ASHPReplacingASHPPage} />
+          <Route path="/foundation-insulation" component={FoundationInsulationPage} />
           <Route path="/audio-recording" component={AudioRecordingPage} />
           <Route component={NotFound} />
         </Switch>

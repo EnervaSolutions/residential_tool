@@ -1,19 +1,5 @@
-export interface CalculationInputs {
-  uBaseline: number;
-  uUpgrade: number;
-  windowArea: number;
-  heatingDegreeDays: number;
-  coolingDegreeDays: number;
-  hoursPerDay: number;
-  adjWindow: number;
-  dua: number;
-  heatingEfficiency: number;
-  coolingEfficiency: number;
-  percentageAirConditioning: number;
-  whToKwh: number;
-  btuToKbtu: number;
-  kwhToGj: number;
-}
+import { NumberProperties } from "docx";
+
 // Editable ASHP calculation inputs
 export interface ASHPCalculationInputs {
   eflhHeating: number;
@@ -73,12 +59,6 @@ export interface ASHPCalculationResults {
 export interface ASHPReplaceCalculationResults {
   gasSavings: number;
   electricitySavings: number;
-}
-
-export interface CalculationResults {
-  gasSavings: number;
-  electricitySavings: number;
-  deltaU: number;
 }
 
 export function calculateASHPSavings(inputs: ASHPCalculationData): ASHPCalculationResults {
@@ -147,6 +127,113 @@ export function calculateASHPReplaceSavings(inputs: ASHPReplaceCalculationData):
   };
 }
 
+// Editable FoundationInsulation calculation inputs
+export interface FoundationInsulationInputs {
+  percentageAC: number;
+  rOldAboveGrade: number;
+  lengthBasementWall: number;
+  cDD: number;
+  efficiencyAC: number;
+  hDD: number;
+  rOldBelowGrade: number;
+  efficiencyHeating: number;
+}
+
+// Constants for ASHP calculations
+export interface FoundationInsulationConstants {
+  rAdded: number;
+  heightBasementWallAbove: number;
+  basementFramFactor: number;
+  numHoursDay: number;
+  discretUseAdjustment: number;
+  btuToKbtu: number;
+  adjustCoolingSaving: number;
+  heightBasementWallBelow: number;
+  btuToTherm: number;
+  adjustHeatSaving: number;
+  kwhToGj: number;
+  thermToGj: number;
+}
+
+// Combined interface for Foundation Insulation calculations
+export interface FoundationInsulationCalculationData extends FoundationInsulationInputs, FoundationInsulationConstants {}
+
+export interface FoundationInsulationCalculationResults {
+  electricCoolingSavings: number;
+  gasHeatingSavings: number;
+  totalSavings: number;
+}
+
+export function calculateFoundationInsulationSavings(inputs: FoundationInsulationCalculationData): FoundationInsulationCalculationResults {
+  const {
+  percentageAC, // C18
+  rAdded, // C19
+  rOldAboveGrade, // C20
+  lengthBasementWall, // C21
+  heightBasementWallAbove, // C22
+  basementFramFactor, // C23
+  numHoursDay, // C24
+  cDD, // C25
+  discretUseAdjustment, // C26
+  btuToKbtu, // C27
+  efficiencyAC, // C28
+  adjustCoolingSaving, // C29
+  hDD, // C30
+  rOldBelowGrade, // C31
+  heightBasementWallBelow, // C32
+  efficiencyHeating, // C33
+  btuToTherm, // C34
+  adjustHeatSaving, // C35
+  kwhToGj, // C36
+  thermToGj, // C37
+  } = inputs;
+
+  // Annual Energy Savings - Electric Cooling (GJ)
+  // Formula: = ((((1/C20-1/(C19+C20))*C21*C22*(1-C23)*C24*C25*C26)/(C27*C28))*C29*C18*C36)
+  const electricCoolingSavings =  ((((1/rOldAboveGrade - 1 / (rAdded + rOldAboveGrade)) * lengthBasementWall * 
+  heightBasementWallAbove * (1 - basementFramFactor) * numHoursDay * cDD * discretUseAdjustment) / (btuToKbtu * efficiencyAC)) * adjustCoolingSaving * percentageAC * kwhToGj);
+
+  // Annual Energy Savings - Gas Heating (GJ)
+  // const result = (((((1/C20-1/(C20+C19))*C21*C22*(1-C23))+((1/C31-1/(C20+C19))*C21*C32*(1-C23)))*C24*C30)/(C33*C34))*C35*C37
+
+  const gasHeatingSavings = (((((1/rOldAboveGrade - 1/(rOldAboveGrade + rAdded)) * lengthBasementWall * heightBasementWallAbove * (1-basementFramFactor)) + 
+  ((1/rOldBelowGrade -1/(rOldAboveGrade + rAdded)) * lengthBasementWall * heightBasementWallBelow * (1 - basementFramFactor))) * numHoursDay * hDD) / (efficiencyHeating * btuToTherm))
+  * adjustHeatSaving * thermToGj;
+
+  // Annual Energy Savings - Total (GJ)
+  // const result = electricCoolingSavings + gasHeatingSavings
+
+  const totalSavings = electricCoolingSavings + gasHeatingSavings;
+
+  return {
+    electricCoolingSavings,
+    gasHeatingSavings,
+    totalSavings
+  };
+}
+
+export interface CalculationInputs {
+  uBaseline: number;
+  uUpgrade: number;
+  windowArea: number;
+  heatingDegreeDays: number;
+  coolingDegreeDays: number;
+  hoursPerDay: number;
+  adjWindow: number;
+  dua: number;
+  heatingEfficiency: number;
+  coolingEfficiency: number;
+  percentageAirConditioning: number;
+  whToKwh: number;
+  btuToKbtu: number;
+  kwhToGj: number;
+}
+
+export interface CalculationResults {
+  gasSavings: number;
+  electricitySavings: number;
+  deltaU: number;
+}
 
 export function calculateWindowSavings(inputs: CalculationInputs): CalculationResults {
   const {

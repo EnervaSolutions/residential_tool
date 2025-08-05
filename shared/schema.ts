@@ -32,6 +32,7 @@ export const projects = pgTable("projects", {
   solarPvData: json("solar_pv_data"),
   ashpData: json("ashp_data"),
   ashpReplacingAshpData: json("ashp_replacing_ashp_data"),
+  foundationInsulationData: json("foundation_insulation_data"),
   
   // Project metadata
   lastModified: timestamp("last_modified").defaultNow().notNull(),

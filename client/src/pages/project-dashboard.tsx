@@ -118,6 +118,15 @@ const getTechnologyResults = (techName: string, project: any) => {
           `Electricity Savings: ${(project.ashpReplacingAshpData.electricitySavings || 0).toFixed(6)} GJ/year`
         ]
       } : null;
+    case "Foundation Insulation":
+      return project.foundationInsulationData ? {
+        primary: `${(project.foundationInsulationData.totalSavings || 0).toFixed(2)} GJ/year`,
+        detailed: [
+          `Electric Cooling Savings: ${(project.foundationInsulationData.electricCoolingSavings || 0).toFixed(6)} GJ/year`,
+          `Gas Heating Savings: ${(project.foundationInsulationData.gasHeatingSavings || 0).toFixed(6)} GJ/year`,
+          `Total Savings: ${(project.foundationInsulationData.totalSavings || 0).toFixed(6)} GJ/year`
+        ]
+      } : null;
     default:
       return null;
   }
@@ -343,6 +352,14 @@ export default function ProjectDashboard() {
       description: "High performance ASHP replacing conventional ASHP", 
       hasData: !!project.ashpReplacingAshpData,
       color: "teal",
+    },
+    {
+      name: "Foundation Insulation",
+      path: "/foundation-insulation",
+      icon: Home,
+      description: "Install foundation insulation to reduce heat loss", 
+      hasData: !!project.foundationInsulationData,
+      color: "slate",
     },
   ];
 
